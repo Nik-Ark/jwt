@@ -21,7 +21,7 @@ public class Authority {
     private String name;
 
     @ManyToMany(mappedBy = "authorities")
-    Set<User> users;
+    Set<SecurityUser> securityUsers;
 
     @Override
     public String toString() {

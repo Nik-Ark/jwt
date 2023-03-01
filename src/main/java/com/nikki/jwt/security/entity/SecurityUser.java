@@ -10,7 +10,7 @@ import java.util.Set;
 @Table(name = "security_users")
 @Getter
 @Setter
-public class User {
+public class SecurityUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User {" +
+        return "SecurityUser {" +
                 "id: " + id +
                 ", username: '" + username + '\'' +
                 ", authorities: " + authorities +
