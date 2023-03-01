@@ -17,8 +17,8 @@ public class SecurityUser {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "email")
+    private String email;
 
     @Column(name = "password")
     private String password;
@@ -34,7 +34,7 @@ public class SecurityUser {
     public String toString() {
         return "SecurityUser {" +
                 "id: " + id +
-                ", username: '" + username + '\'' +
+                ", email: '" + email + '\'' +
                 ", authorities: " + authorities +
                 '}';
     }
