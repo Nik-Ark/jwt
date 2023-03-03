@@ -4,27 +4,27 @@ CREATE TABLE IF NOT EXISTS security_users
     email           VARCHAR(45)     NOT NULL UNIQUE,
     password        VARCHAR(100)    NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY     (id)
+    PRIMARY KEY     (id),
+    FOREIGN KEY     (app_user_id)   REFERENCES jwt_user_db.app_users(id)
 ) COLLATE utf8_bin;
 
-CREATE TABLE IF NOT EXISTS authorities
+CREATE TABLE IF NOT EXISTS roles
 (
     id              INT NOT NULL    AUTO_INCREMENT,
-    name            VARCHAR(45)     NOT NULL,
+    name            VARCHAR(45)     NOT NULL UNIQUE,
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
 
-CREATE TABLE IF NOT EXISTS security_users_authorities
+CREATE TABLE IF NOT EXISTS security_users_roles
 (
     user_id         INT NOT NULL,
-    authority_id    INT NOT NULL,
-    PRIMARY KEY     (user_id, authority_id)
+    role_id         INT NOT NULL,
+    PRIMARY KEY     (user_id, role_id)
 ) COLLATE utf8_bin;
 
 CREATE TABLE IF NOT EXISTS app_users
 (
     id              INT NOT NULL    AUTO_INCREMENT,
-    email           VARCHAR(45)     NOT NULL UNIQUE,
     first_name      VARCHAR(45)     NOT NULL UNIQUE,
     last_name       VARCHAR(45)     NOT NULL UNIQUE,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,

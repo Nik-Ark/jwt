@@ -6,11 +6,11 @@ import lombok.Setter;
 
 import java.util.Set;
 
-@Entity
-@Table(name = "authorities")
 @Getter
 @Setter
-public class Authority {
+@Entity
+@Table(name = "roles")
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +20,12 @@ public class Authority {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "authorities")
+    @ManyToMany(mappedBy = "roles")
     Set<SecurityUser> securityUsers;
 
     @Override
     public String toString() {
-        return "Authority: {" +
+        return "Role: {" +
                 "name: '" + name + '\'' +
                 '}';
     }

@@ -1,23 +1,21 @@
-package com.nikki.jwt.app;
+package com.nikki.jwt.app.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Table(name = "app_users")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "app_users")
 public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "email")
-    private String email;
     @Column(name = "firstName")
     private String firstName;
     @Column(name = "lastName")
@@ -27,7 +25,6 @@ public class AppUser {
     public String toString() {
         return "AppUser {" +
                 "id: " + id +
-                ", email: '" + email + '\'' +
                 ", firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 '}';
