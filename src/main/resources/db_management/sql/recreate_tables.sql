@@ -28,9 +28,9 @@ CREATE TABLE roles
 ) COLLATE utf8_bin;
 
 INSERT INTO roles
-VALUES (1, 'ADMIN'),
+VALUES (1, 'CLIENT'),
        (2, 'MANAGER'),
-       (3, 'CLIENT'),
+       (3, 'ADMIN'),
        (4, 'DEVELOPER');
 
 CREATE TABLE security_users_roles
