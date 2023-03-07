@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS app_users
 (
     id              INT NOT NULL    AUTO_INCREMENT,
-    first_name      VARCHAR(45)     NOT NULL UNIQUE,
-    last_name       VARCHAR(45)     NOT NULL UNIQUE,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS roles
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
 
-INSERT INTO roles
-VALUES (1, 'CLIENT'),
-       (2, 'MANAGER'),
-       (3, 'ADMIN'),
-       (4, 'DEVELOPER');
+-- INSERT INTO roles
+-- VALUES (1, 'CLIENT'),
+--        (2, 'MANAGER'),
+--        (3, 'ADMIN'),
+--        (4, 'DEVELOPER');
 
 CREATE TABLE IF NOT EXISTS security_users_roles
 (

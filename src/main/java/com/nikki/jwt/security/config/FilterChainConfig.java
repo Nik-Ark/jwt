@@ -26,15 +26,16 @@ public class FilterChainConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/demo/client")
+                        .requestMatchers("/api/v1/demo/client/**")
                         .hasAnyRole("CLIENT", "MANAGER", "ADMIN", "DEVELOPER")
-                        .requestMatchers("/api/v1/demo/manager")
+                        .requestMatchers("/api/v1/demo/manager/**")
                         .hasAnyRole("MANAGER", "ADMIN", "DEVELOPER")
-                        .requestMatchers("/api/v1/demo/admin")
+                        .requestMatchers("/api/v1/demo/admin/**")
                         .hasAnyRole("ADMIN", "DEVELOPER")
-                        .requestMatchers("/api/v1/demo/developer")
+                        .requestMatchers("/api/v1/demo/developer/**")
                         .hasRole("DEVELOPER")
                         .anyRequest().authenticated()
                 )

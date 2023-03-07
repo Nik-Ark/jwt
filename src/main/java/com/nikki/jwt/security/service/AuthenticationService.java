@@ -1,7 +1,6 @@
 package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.entity.AppUser;
-import com.nikki.jwt.app.repository.AppUserRepository;
 import com.nikki.jwt.security.dto.LoginRequestDto;
 import com.nikki.jwt.security.dto.RegisterRequestDto;
 import com.nikki.jwt.security.entity.Role;
@@ -12,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,6 @@ import java.util.Set;
 public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
-    private final AppUserRepository appUserRepository;
     private final SecurityUserRepository securityUserRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -36,12 +36,7 @@ public class AuthenticationService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .build();
-        appUserRepository.save(appUser);
 
-        // CHECK APP USER
-        System.out.println(appUser);
-
-        // MAKE ROLES STATIC FROM ENUM
         Optional<Role> retrievedRole = roleRepository.findByName("CLIENT");
         Set<Role> roles = new HashSet<>();
         retrievedRole.ifPresent(roles::add);
@@ -56,6 +51,7 @@ public class AuthenticationService {
 
         // CHECK SECURITY USER
         System.out.println(securityUser);
+        System.out.println(securityUser.getAppUser());
 
         String token = jwtService.generateToken(securityUser);
 
@@ -64,10 +60,21 @@ public class AuthenticationService {
 
     public ResponseEntity<String> login(LoginRequestDto request) {
 
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                    request.getEmail(),
+                    request.getPassword()
+            )
+        );
+        SecurityUser securityUser = securityUserRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new UsernameNotFoundException("User with email: " + request.getEmail() + " not found")
+        );
 
+        // CHECK SECURITY USER
+        System.out.println(securityUser);
+        System.out.println(securityUser.getAppUser());
 
-        String token = "";
-
+        String token = jwtService.generateToken(securityUser);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 }

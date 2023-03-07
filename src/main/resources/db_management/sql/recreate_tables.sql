@@ -8,8 +8,8 @@ DROP TABLE IF EXISTS app_users;
 CREATE TABLE app_users
 (
     id              INT NOT NULL    AUTO_INCREMENT,
-    first_name      VARCHAR(45)     NOT NULL UNIQUE,
-    last_name       VARCHAR(45)     NOT NULL UNIQUE,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
@@ -31,11 +31,11 @@ CREATE TABLE security_users
     FOREIGN KEY     (app_user_id)   REFERENCES jwt_user_db.app_users(id)
 ) COLLATE utf8_bin;
 
-INSERT INTO security_users (id, email, password)
-VALUES (1, 'user1', '$2a$12$f66aaKBc6f23La7JaN5ca.obWwmx8ENNHG.pDNdgHTAkgxVEIOqgW'),
-       (2, 'user2', '$2a$12$eV8SV478lxghvjeLDNbH.eUyd4AW.81SFTKjcViyJAOO0qkaJbiG2'),
-       (3, 'user3', '$2y$10$/DGK1xfFrrnHaKswprgJVedHSHI9w3n.qrt3NF1rmuX7P9KhI7vZO'),
-       (4, 'user4', '$2a$12$FBEsdOlED31rlKaac/AvjuDtdu72MdZp4ZjET7SvdidInXxK/9Qya');
+INSERT INTO security_users (id, email, password, app_user_id)
+VALUES (1, 'user1', '$2a$12$f66aaKBc6f23La7JaN5ca.obWwmx8ENNHG.pDNdgHTAkgxVEIOqgW', 1),
+       (2, 'user2', '$2a$12$eV8SV478lxghvjeLDNbH.eUyd4AW.81SFTKjcViyJAOO0qkaJbiG2', 2),
+       (3, 'user3', '$2y$10$/DGK1xfFrrnHaKswprgJVedHSHI9w3n.qrt3NF1rmuX7P9KhI7vZO', 3),
+       (4, 'user4', '$2a$12$FBEsdOlED31rlKaac/AvjuDtdu72MdZp4ZjET7SvdidInXxK/9Qya', 4);
 
 CREATE TABLE roles
 (
