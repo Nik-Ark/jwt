@@ -2,8 +2,7 @@ package com.nikki.jwt.security.entity;
 
 import com.nikki.jwt.app.entity.AppUser;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +13,9 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "security_users")
 public class SecurityUser implements UserDetails {

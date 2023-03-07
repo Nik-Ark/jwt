@@ -34,3 +34,5 @@ build/
 
 ### Custom ###
 src/main/resources/db_management/password/pass
+
+src/main/java/com/nikki/jwt/security/constants/JwtConstants.java
