@@ -32,7 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
-### Custom ###
+### MySQL Root Password ###
 src/main/resources/db_management/password/pass
 
-src/main/java/com/nikki/jwt/security/constants/JwtConstants.java
+### Production properties ###
+src/main/resources/application-production.properties
