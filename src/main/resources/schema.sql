@@ -37,3 +37,14 @@ CREATE TABLE IF NOT EXISTS security_users_roles
     role_id         INT NOT NULL,
     PRIMARY KEY     (user_id, role_id)
 ) COLLATE utf8_bin;
+
+CREATE TABLE IF NOT EXISTS tokens
+(
+    id                  INT NOT NULL        AUTO_INCREMENT,
+    token               VARCHAR(256)        NOT NULL UNIQUE,
+    expired             BOOLEAN             DEFAULT FALSE,
+    revoked             BOOLEAN             DEFAULT FALSE,
+    security_user_id    INT,
+    PRIMARY KEY         (id),
+    FOREIGN KEY         (security_user_id)  REFERENCES jwt_user_db.security_users(id)
+) COLLATE utf8_bin;

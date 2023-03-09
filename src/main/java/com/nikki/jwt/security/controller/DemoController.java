@@ -1,4 +1,4 @@
-package com.nikki.jwt.app.controller;
+package com.nikki.jwt.security.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

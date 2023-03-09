@@ -1,10 +1,9 @@
-package com.nikki.jwt.app.controller;
+package com.nikki.jwt.security.controller;
 
 import com.nikki.jwt.security.dto.LoginRequestDto;
 import com.nikki.jwt.security.dto.RegisterRequestDto;
 import com.nikki.jwt.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
