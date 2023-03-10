@@ -15,9 +15,9 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
-    @Column(name = "token")
+    @Column(name = "token", unique = true)
     private String token;
 
     @Column(name = "expired")
@@ -34,7 +34,6 @@ public class Token {
     public String toString() {
         return "Token {" +
                 "id: " + id +
-                ", expired: " + expired +
                 ", revoked: " + revoked +
                 ", securityUserId: " + securityUser.getId() +
                 '}';

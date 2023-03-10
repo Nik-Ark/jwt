@@ -85,10 +85,23 @@ public class AuthenticationService {
     }
 
     private void saveToken(SecurityUser securityUser, String jwtToken) {
+        revokeUserTokens(securityUser.getId());
         Token token = Token.builder()
                 .token(jwtToken)
                 .securityUser(securityUser)
                 .build();
         tokenRepository.save(token);
+    }
+
+    private void revokeUserTokens(int id) {
+        List<Token> validTokens = tokenRepository.findAllTokensBySecurityUserId(id);
+        if (validTokens.isEmpty())
+            return;
+
+        validTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validTokens);
     }
 }

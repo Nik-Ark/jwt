@@ -1,5 +1,6 @@
 package com.nikki.jwt.security.filter;
 
+import com.nikki.jwt.security.repository.TokenRepository;
 import com.nikki.jwt.security.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(
@@ -40,13 +42,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        jwt = authHeader.substring(7);
+        jwt = authHeader.substring("Bearer ".length());
         userEmail = jwtService.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails securityUser = userDetailsService.loadUserByUsername(userEmail);
 
-            if (jwtService.isTokenValid(jwt, securityUser)) {
+            UserDetails securityUser = userDetailsService.loadUserByUsername(userEmail);
+            boolean tokenNotRevoked = tokenRepository.findByToken(jwt)
+                    .map(token -> !token.isRevoked() && !token.isExpired())
+                    .orElse(false);
+
+            if (jwtService.isTokenValid(jwt, securityUser) && tokenNotRevoked) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         securityUser,
                         null,

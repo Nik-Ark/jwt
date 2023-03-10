@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS security_users_roles
 
 CREATE TABLE IF NOT EXISTS tokens
 (
-    id                  INT NOT NULL        AUTO_INCREMENT,
+    id                  BIGINT NOT NULL     AUTO_INCREMENT,
     token               VARCHAR(256)        NOT NULL UNIQUE,
     expired             BOOLEAN             DEFAULT FALSE,
     revoked             BOOLEAN             DEFAULT FALSE,
