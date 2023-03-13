@@ -20,9 +20,6 @@ public class Token {
     @Column(name = "token", unique = true)
     private String token;
 
-    @Column(name = "expired")
-    private boolean expired;
-
     @Column(name = "revoked")
     private boolean revoked;
 

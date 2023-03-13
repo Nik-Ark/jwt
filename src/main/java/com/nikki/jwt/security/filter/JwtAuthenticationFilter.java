@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             UserDetails securityUser = userDetailsService.loadUserByUsername(userEmail);
             boolean tokenNotRevoked = tokenRepository.findByToken(jwt)
-                    .map(token -> !token.isRevoked() && !token.isExpired())
+                    .map(token -> !token.isRevoked())
                     .orElse(false);
 
             if (jwtService.isTokenValid(jwt, securityUser) && tokenNotRevoked) {

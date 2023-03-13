@@ -1,11 +1,11 @@
 package com.nikki.jwt.security.service;
 
+import com.nikki.jwt.security.entity.Token;
 import com.nikki.jwt.security.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class LogoutService implements LogoutHandler {
 
     private final TokenRepository tokenRepository;
+    private final JwtService jwtService;
 
     @Override
     public void logout(
@@ -23,18 +24,17 @@ public class LogoutService implements LogoutHandler {
     ) {
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return;
+            throw new RuntimeException("Correct Jwt token is not provided");
         }
-        jwt = authHeader.substring(7);
-        var storedToken = tokenRepository.findByToken(jwt)
-                .orElse(null);
-        if (storedToken != null) {
-            storedToken.setExpired(true);
-            storedToken.setRevoked(true);
-            tokenRepository.save(storedToken);
-            SecurityContextHolder.clearContext();
+
+        final String jwt = authHeader.substring("Bearer ".length());
+        Token token = tokenRepository.findByToken(jwt).orElse(null);
+        if (token == null || token.isRevoked()) {
+            throw new RuntimeException("Correct Jwt token is not provided");
         }
+
+        token.setRevoked(true);
+        tokenRepository.save(token);
     }
 }
