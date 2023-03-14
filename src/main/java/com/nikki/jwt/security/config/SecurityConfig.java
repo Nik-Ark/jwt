@@ -32,7 +32,7 @@ public class SecurityConfig {
         return (HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) -> {
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(authException.getMessage());
+            response.getWriter().write("Authentication Error");
         };
     }
 

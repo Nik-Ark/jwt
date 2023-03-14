@@ -9,7 +9,7 @@ import com.nikki.jwt.security.entity.Token;
 import com.nikki.jwt.security.repository.RoleRepository;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
 import com.nikki.jwt.security.repository.TokenRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@RequiredArgsConstructor
 @Service
 public class AuthenticationService {
 
@@ -30,6 +29,26 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final long JWT_LIVE_TIME;
+
+    public AuthenticationService(
+            AuthenticationManager authenticationManager,
+            SecurityUserRepository securityUserRepository,
+            RoleRepository roleRepository,
+            TokenRepository tokenRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            @Value("${JWT_LIVE_TIME_MILLIS}") long JWT_LIVE_TIME
+    )
+    {
+        this.authenticationManager = authenticationManager;
+        this.securityUserRepository = securityUserRepository;
+        this.roleRepository = roleRepository;
+        this.tokenRepository = tokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.JWT_LIVE_TIME = JWT_LIVE_TIME;
+    }
 
     public ResponseEntity<String> register(RegisterRequestDto request) {
 
@@ -89,11 +108,12 @@ public class AuthenticationService {
         Token token = Token.builder()
                 .token(jwtToken)
                 .securityUser(securityUser)
+                .expiryDate(new Date(System.currentTimeMillis() + JWT_LIVE_TIME))
                 .build();
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(int id) {
+    private void revokeAllUserTokens(Long id) {
         List<Token> validTokens = tokenRepository.findAllValidTokensBySecurityUserId(id);
         if (validTokens.isEmpty())
             return;

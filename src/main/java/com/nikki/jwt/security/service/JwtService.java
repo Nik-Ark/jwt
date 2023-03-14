@@ -23,7 +23,8 @@ public class JwtService {
     public JwtService(
             @Value("${JWT_SECRET}") String SECRET_KEY,
             @Value("${JWT_LIVE_TIME_MILLIS}") long JWT_LIVE_TIME
-    ) {
+    )
+    {
         this.SECRET_KEY = SECRET_KEY;
         this.JWT_LIVE_TIME = JWT_LIVE_TIME;
     }
