@@ -1,8 +1,6 @@
 package com.nikki.jwt.security.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-
-import java.io.IOException;
 
 @Configuration
 @RequiredArgsConstructor
