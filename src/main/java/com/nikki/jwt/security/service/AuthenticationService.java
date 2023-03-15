@@ -3,16 +3,20 @@ package com.nikki.jwt.security.service;
 import com.nikki.jwt.app.entity.AppUser;
 import com.nikki.jwt.security.dto.LoginRequestDto;
 import com.nikki.jwt.security.dto.RegisterRequestDto;
+import com.nikki.jwt.security.dto.TokenPairDto;
+import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.Role;
 import com.nikki.jwt.security.entity.SecurityUser;
-import com.nikki.jwt.security.entity.Token;
 import com.nikki.jwt.security.repository.RoleRepository;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
-import com.nikki.jwt.security.repository.TokenRepository;
-import org.springframework.beans.factory.annotation.Value;
+import com.nikki.jwt.security.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,37 +24,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@RequiredArgsConstructor
 @Service
 public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
     private final SecurityUserRepository securityUserRepository;
     private final RoleRepository roleRepository;
-    private final TokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final long JWT_LIVE_TIME;
+    private final TokenPairService tokenPairService;
+    private final JwtUtil jwtUtil;
 
-    public AuthenticationService(
-            AuthenticationManager authenticationManager,
-            SecurityUserRepository securityUserRepository,
-            RoleRepository roleRepository,
-            TokenRepository tokenRepository,
-            PasswordEncoder passwordEncoder,
-            JwtService jwtService,
-            @Value("${JWT_LIVE_TIME_MILLIS}") long JWT_LIVE_TIME
-    )
-    {
-        this.authenticationManager = authenticationManager;
-        this.securityUserRepository = securityUserRepository;
-        this.roleRepository = roleRepository;
-        this.tokenRepository = tokenRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.JWT_LIVE_TIME = JWT_LIVE_TIME;
-    }
-
-    public ResponseEntity<String> register(RegisterRequestDto request) {
+    public ResponseEntity<TokenPairDto> register(RegisterRequestDto request) {
 
         AppUser appUser = AppUser.builder()
                 .firstName(request.getFirstName())
@@ -69,17 +54,14 @@ public class AuthenticationService {
                 .tokens(new ArrayList<>())
                 .build();
         securityUserRepository.save(securityUser);
-        String jwtToken = jwtService.generateToken(securityUser);
-        saveToken(securityUser, jwtToken);
 
-        // CHECK SECURITY USER AND TOKEN
-        System.out.println(appUser);
-        System.out.println(securityUser);
+        TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
+        tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        return new ResponseEntity<>(jwtToken, HttpStatus.CREATED);
+        return new ResponseEntity<>(tokenPair, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> login(LoginRequestDto request) {
+    public ResponseEntity<TokenPairDto> login(LoginRequestDto request) {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -92,33 +74,49 @@ public class AuthenticationService {
                 () -> new UsernameNotFoundException("User with email: " + request.getEmail() + " not found")
         );
 
-        String jwtToken = jwtService.generateToken(securityUser);
+        TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
+        tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        saveToken(securityUser, jwtToken);
-
-        // CHECK SECURITY USER AND TOKEN
-        System.out.println(securityUser.getAppUser());
-        System.out.println(securityUser);
-
-        return new ResponseEntity<>(jwtToken, HttpStatus.OK);
+        return new ResponseEntity<>(tokenPair, HttpStatus.OK);
     }
 
-    private void saveToken(SecurityUser securityUser, String jwtToken) {
-        revokeAllUserTokens(securityUser.getId());
-        Token token = Token.builder()
-                .token(jwtToken)
-                .securityUser(securityUser)
-                .expiryDate(new Date(System.currentTimeMillis() + JWT_LIVE_TIME))
-                .build();
-        tokenRepository.save(token);
-    }
+    public ResponseEntity<TokenPairDto> refreshToken(HttpServletRequest request) {
 
-    private void revokeAllUserTokens(Long id) {
-        List<Token> validTokens = tokenRepository.findAllValidTokensBySecurityUserId(id);
-        if (validTokens.isEmpty())
-            return;
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            throw new BadCredentialsException("Correct Jwt Refresh token is not provided");
+        }
 
-        validTokens.forEach(token -> token.setRevoked(true));
-        tokenRepository.saveAll(validTokens);
+        final String refreshJwt = authHeader.substring("Bearer ".length());
+        RefreshToken refreshToken = tokenPairService.findByJwtRefreshToken(refreshJwt).orElse(null);
+        if (refreshToken == null || refreshToken.isRevoked()) {
+            throw new BadCredentialsException("Correct Jwt Refresh token is not provided");
+        }
+
+        final String userEmail;
+        try {
+            userEmail = jwtUtil.extractUsername(refreshJwt);
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT_REFRESH_TOKEN_UNABLE_TO_GET_USERNAME " + e);
+            throw e;
+        } catch (ExpiredJwtException e) {
+            System.out.println("JWT_REFRESH_TOKEN_EXPIRED " + e);
+            throw e;
+        }
+
+        SecurityUser securityUser = securityUserRepository
+                .findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User with email: " + userEmail + " not found"));
+
+        // !!!!!! CAN I EVER REACH THIS LINE OF CODE IN CASE WHEN PROVIDED TOKEN IS EXPIRED ?????????
+        if (!jwtUtil.isTokenValid(refreshJwt, securityUser)) {
+            System.out.println("INVALID_JWT_REFRESH_TOKEN ");
+            throw new RuntimeException("Yes I Can");
+        }
+
+        TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
+        tokenPairService.saveTokenPair(securityUser, tokenPair);
+
+        return new ResponseEntity<>(tokenPair, HttpStatus.OK);
     }
 }
