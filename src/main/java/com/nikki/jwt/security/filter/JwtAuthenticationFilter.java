@@ -1,7 +1,8 @@
 package com.nikki.jwt.security.filter;
 
-import com.nikki.jwt.security.repository.TokenRepository;
-import com.nikki.jwt.security.service.JwtService;
+import com.nikki.jwt.security.service.TokenPairService;
+import com.nikki.jwt.security.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +23,9 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
-    private final TokenRepository tokenRepository;
+    private final TokenPairService tokenPairService;
 
     @Override
     protected void doFilterInternal(
@@ -34,25 +35,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring("Bearer ".length());
-        userEmail = jwtService.extractUsername(jwt);
+        final String jwt = authHeader.substring("Bearer ".length());
+        final String userEmail;
+
+        // !!!!!    CHECK IF THIS EXCEPTION IS EVER CATCHED     !!!!!
+        try {
+            userEmail = jwtUtil.extractUsername(jwt);
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT_TOKEN_UNABLE_TO_GET_USERNAME " + e);
+            throw e;
+        } catch (ExpiredJwtException e) {
+            System.out.println("JWT_TOKEN_EXPIRED " + e);
+            throw e;
+        }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails securityUser = userDetailsService.loadUserByUsername(userEmail);
-            boolean tokenNotRevoked = tokenRepository.findByToken(jwt)
+            boolean tokenNotRevoked = tokenPairService.findByJwtToken(jwt)
                     .map(token -> !token.isRevoked())
                     .orElse(false);
 
-            if (jwtService.isTokenValid(jwt, securityUser) && tokenNotRevoked) {
+            if (jwtUtil.isTokenValid(jwt, securityUser) && tokenNotRevoked) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         securityUser,
                         null,

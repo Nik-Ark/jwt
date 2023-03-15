@@ -1,6 +1,7 @@
 USE jwt_user_db;
 
 DROP TABLE IF EXISTS tokens;
+DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS security_users;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS security_users_roles;
@@ -68,6 +69,17 @@ CREATE TABLE tokens
 (
     id                  BIGINT NOT NULL     AUTO_INCREMENT,
     token               VARCHAR(256)        NOT NULL UNIQUE,
+    revoked             BOOLEAN             DEFAULT FALSE,
+    expiry_date         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    security_user_id    BIGINT,
+    PRIMARY KEY         (id),
+    FOREIGN KEY         (security_user_id)  REFERENCES jwt_user_db.security_users(id)
+) COLLATE utf8_bin;
+
+CREATE TABLE refresh_tokens
+(
+    id                  BIGINT NOT NULL     AUTO_INCREMENT,
+    refresh_token       VARCHAR(256)        NOT NULL UNIQUE,
     revoked             BOOLEAN             DEFAULT FALSE,
     expiry_date         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     security_user_id    BIGINT,

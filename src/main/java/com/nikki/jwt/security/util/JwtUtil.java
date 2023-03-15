@@ -1,5 +1,6 @@
-package com.nikki.jwt.security.service;
+package com.nikki.jwt.security.util;
 
+import com.nikki.jwt.security.dto.TokenPairDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,26 +8,29 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
-public class JwtService {
+@Component
+public class JwtUtil {
 
     private final String SECRET_KEY;
     private final long JWT_LIVE_TIME;
+    private final long JWT_REFRESH_LIVE_TIME;
 
-    public JwtService(
+    public JwtUtil(
             @Value("${JWT_SECRET}") String SECRET_KEY,
-            @Value("${JWT_LIVE_TIME_MILLIS}") long JWT_LIVE_TIME
+            @Value("${JWT_LIVE_TIME_MILLIS}") long JWT_LIVE_TIME,
+            @Value("${JWT_REFRESH_LIVE_TIME_MILLIS}") long JWT_REFRESH_LIVE_TIME
     )
     {
         this.SECRET_KEY = SECRET_KEY;
         this.JWT_LIVE_TIME = JWT_LIVE_TIME;
+        this.JWT_REFRESH_LIVE_TIME = JWT_REFRESH_LIVE_TIME;
     }
 
     public String extractUsername(String token) {
@@ -38,30 +42,40 @@ public class JwtService {
         return claimResolver.apply(claims);
     }
 
-    public String generateToken(
-            UserDetails userDetails
+    private String generateToken(
+            String userName,
+            long TOKEN_LIVE_TIME
     ) {
         return Jwts
                 .builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_LIVE_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_LIVE_TIME))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact(); // generates and returns Token
     }
 
-    public String generateToken(
+    private String generateToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails
+            String userName,
+            long TOKEN_LIVE_TIME
     ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_LIVE_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_LIVE_TIME))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact(); // generates and returns Token
+    }
+
+    public TokenPairDto generateTokenPair(UserDetails userDetails) {
+        final String userName = userDetails.getUsername();
+        return TokenPairDto.builder()
+                .token(generateToken(userName, JWT_LIVE_TIME))
+                .refreshToken(generateToken(userName, JWT_REFRESH_LIVE_TIME))
+                .build();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -73,7 +87,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    private Date extractExpiration(String token) {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 

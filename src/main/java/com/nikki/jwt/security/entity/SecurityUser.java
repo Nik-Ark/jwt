@@ -46,6 +46,9 @@ public class SecurityUser implements UserDetails {
     @OneToMany(mappedBy = "securityUser")
     private List<Token> tokens;
 
+    @OneToMany(mappedBy = "securityUser")
+    private List<RefreshToken> refreshTokens;
+
     @Override
     public String getUsername() {
         return email;

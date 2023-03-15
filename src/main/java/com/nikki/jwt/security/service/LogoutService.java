@@ -1,7 +1,6 @@
 package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.security.entity.Token;
-import com.nikki.jwt.security.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class LogoutService implements LogoutHandler {
-
-    private final TokenRepository tokenRepository;
+    private final TokenPairService tokenPairService;
 
     @Override
     public void logout(
@@ -30,12 +28,11 @@ public class LogoutService implements LogoutHandler {
         }
 
         final String jwt = authHeader.substring("Bearer ".length());
-        Token token = tokenRepository.findByToken(jwt).orElse(null);
+        Token token = tokenPairService.findByJwtToken(jwt).orElse(null);
         if (token == null || token.isRevoked()) {
             throw new BadCredentialsException("Correct Jwt token is not provided");
         }
 
-        token.setRevoked(true);
-        tokenRepository.save(token);
+        tokenPairService.revokeAllUserTokens(token.getSecurityUser().getId());
     }
 }
