@@ -2,7 +2,6 @@ package com.nikki.jwt.security.filter;
 
 import com.nikki.jwt.security.service.TokenPairService;
 import com.nikki.jwt.security.util.JwtUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,18 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring("Bearer ".length());
-        final String userEmail;
 
-        // !!!!!    CHECK IF THIS EXCEPTION IS EVER CATCHED     !!!!!
-        try {
-            userEmail = jwtUtil.extractUsername(jwt);
-        } catch (IllegalArgumentException e) {
-            System.out.println("JWT_TOKEN_UNABLE_TO_GET_USERNAME " + e);
-            throw e;
-        } catch (ExpiredJwtException e) {
-            System.out.println("JWT_TOKEN_EXPIRED " + e);
-            throw e;
-        }
+        // TRY CATCH HERE !!!
+        // BUT INSTEAD IT IS BETTER TO IMPROVE LOGIC HERE
+        // FIRST I SHOULD CHECK IF THIS TOKEN IS PRESENT IN THE DATABASE
+        // AND AFTER GET USERNAME FROM IT
+        final String userEmail = jwtUtil.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 

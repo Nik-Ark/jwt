@@ -1,9 +1,7 @@
 package com.nikki.jwt.security.util;
 
 import com.nikki.jwt.security.dto.TokenPairDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,12 +90,28 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims;
+        try {
+            claims = Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (MalformedJwtException e) {
+            System.out.println("From catch in Extract all Claims: Invalid JWT token: " + e.getMessage());
+            throw e;
+        } catch (ExpiredJwtException e) {
+            System.out.println("From catch in Extract all Claims: JWT token is expired: " + e.getMessage());
+            throw e;
+        } catch (UnsupportedJwtException e) {
+            System.out.println("From catch in Extract all Claims: JWT token is unsupported: " + e.getMessage());
+            throw e;
+        } catch (IllegalArgumentException e) {
+            System.out.println("From catch in Extract all Claims: JWT claims string is empty: " + e.getMessage());
+            throw e;
+        }
+        return claims;
     }
 
     private Key getSigningKey() {

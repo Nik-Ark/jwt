@@ -10,7 +10,6 @@ import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.RoleRepository;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
 import com.nikki.jwt.security.util.JwtUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -93,22 +92,15 @@ public class AuthenticationService {
             throw new BadCredentialsException("Correct Jwt Refresh token is not provided");
         }
 
-        final String userEmail;
-        try {
-            userEmail = jwtUtil.extractUsername(refreshJwt);
-        } catch (IllegalArgumentException e) {
-            System.out.println("JWT_REFRESH_TOKEN_UNABLE_TO_GET_USERNAME " + e);
-            throw e;
-        } catch (ExpiredJwtException e) {
-            System.out.println("JWT_REFRESH_TOKEN_EXPIRED " + e);
-            throw e;
-        }
+        final String userEmail = jwtUtil.extractUsername(refreshJwt);
 
         SecurityUser securityUser = securityUserRepository
                 .findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User with email: " + userEmail + " not found"));
 
         // !!!!!! CAN I EVER REACH THIS LINE OF CODE IN CASE WHEN PROVIDED TOKEN IS EXPIRED ?????????
+        // NO, BECAUSE EXTRACT ALL CLAIMS .parseClaimsJws(token) THROWS EXCEPTION(s) WHEN TOKEN EXPIRED OR ...
+
         if (!jwtUtil.isTokenValid(refreshJwt, securityUser)) {
             System.out.println("INVALID_JWT_REFRESH_TOKEN ");
             throw new RuntimeException("Yes I Can");

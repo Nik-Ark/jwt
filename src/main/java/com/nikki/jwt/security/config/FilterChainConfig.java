@@ -1,7 +1,6 @@
 package com.nikki.jwt.security.config;
 
 import com.nikki.jwt.security.filter.JwtAuthenticationFilter;
-import com.nikki.jwt.security.service.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

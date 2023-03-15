@@ -87,7 +87,6 @@ public class SecurityUser implements UserDetails {
                 "id: " + id +
                 ", email: '" + email + '\'' +
                 ", roles: " + roles +
-                ", tokens: " + tokens +
                 '}';
     }
 }
