@@ -48,6 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // AND AFTER GET USERNAME FROM IT
         final String userEmail = jwtUtil.extractUsername(jwt);
 
+        // КОНТЕКСТ УСТАНАВЛИВАЕТСЯ КАЖДЫЙ РАЗ С КАЖДЫМ ЗАПРОСОМ.
+        // ЭТУ ПРОВЕРКУ МОЖНО НЕ ДЕЛАТЬ ЕСЛИ ИСПОЛЬЗУЕТСЯ ТОЛЬКО ОДИН ФИЛЬТР (ЭТОТ)
+        // ЕСЛИ ЖЕ ФИЛЬТРОВ ХОТЯ БЫ ДВА, ТО ПРЕЖДЕ ЧЕМ ЗАПРОС ДОСТИГ ДАННОГО ФИЛЬТРА
+        // ВОЗМОЖНО ПОЛЬЗОВАТЕЛЬ УЖЕ АУТЕНТИФИЦИРОВАЛСЯ В ПРЕДЫДУЩЕМ ФИЛЬТРЕ
+        // И В ТАКОМ СЛУЧАЕ ОБЪЕКТ АУТЕНТИФИКАЦИИ (С ИНФОРМАЦИЕЙ О ПОЛЬЗОВАТЕЛЕ И ПРАВАМИ ДОСТУПА/РОЛЯМИ)
+        // УЖЕ БЫЛ ПОЛОЖЕН В КОНТЕКСТ (SecurityContext) И НАХОДИТСЯ ТАМ.
+        // В НАЧАЛЕ КАЖДОГО ЗАПРОСА КОНТЕКСТ РАВЕН = NULL
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails securityUser = userDetailsService.loadUserByUsername(userEmail);
@@ -65,6 +72,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                System.out.println("Security Context Was Set for username " + userEmail);
             }
         }
 
