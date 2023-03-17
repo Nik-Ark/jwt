@@ -28,6 +28,8 @@ public class FilterChainConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .cors()
+                .and()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeHttpRequests()
