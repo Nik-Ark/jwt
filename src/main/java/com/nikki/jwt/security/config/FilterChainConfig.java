@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -28,25 +27,19 @@ public class FilterChainConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                )
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/demo/client/**")
-                        .hasAnyRole("CLIENT", "MANAGER", "ADMIN", "DEVELOPER")
-                        .requestMatchers("/api/v1/demo/manager/**")
-                        .hasAnyRole("MANAGER", "ADMIN", "DEVELOPER")
-                        .requestMatchers("/api/v1/demo/admin/**")
-                        .hasAnyRole("ADMIN", "DEVELOPER")
-                        .requestMatchers("/api/v1/demo/developer/**")
-                        .hasRole("DEVELOPER")
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/demo/client/**").hasAnyRole("CLIENT", "MANAGER", "ADMIN", "DEVELOPER")
+                .requestMatchers("/api/v1/demo/manager/**").hasAnyRole("MANAGER", "ADMIN", "DEVELOPER")
+                .requestMatchers("/api/v1/demo/admin/**").hasAnyRole("ADMIN", "DEVELOPER")
+                .requestMatchers("/api/v1/demo/developer/**").hasRole("DEVELOPER")
+                .anyRequest().authenticated()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout()
