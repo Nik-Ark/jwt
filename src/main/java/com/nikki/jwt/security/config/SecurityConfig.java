@@ -3,7 +3,7 @@ package com.nikki.jwt.security.config;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,14 +20,22 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final SecurityUserRepository securityUserRepository;
+    private final String ALLOWED_ORIGINS;
+
+    public SecurityConfig(
+            SecurityUserRepository securityUserRepository,
+            @Value("${CORS_ALLOWED_ORIGINS}") String ALLOWED_ORIGINS
+    )
+    {
+        this.securityUserRepository = securityUserRepository;
+        this.ALLOWED_ORIGINS = ALLOWED_ORIGINS;
+    }
 
     @Bean
     AuthenticationEntryPoint authenticationEntryPoint() {
@@ -41,11 +49,9 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Requestor-Type"));
-        configuration.setExposedHeaders(Arrays.asList("X-Get-Header"));
+        configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
