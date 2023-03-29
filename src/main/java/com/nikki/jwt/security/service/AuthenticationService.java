@@ -1,9 +1,7 @@
 package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.entity.AppUser;
-import com.nikki.jwt.security.dto.LoginRequestDto;
-import com.nikki.jwt.security.dto.RegisterRequestDto;
-import com.nikki.jwt.security.dto.TokenPairDto;
+import com.nikki.jwt.security.dto.*;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.Role;
 import com.nikki.jwt.security.entity.SecurityUser;
@@ -34,7 +32,7 @@ public class AuthenticationService {
     private final TokenPairService tokenPairService;
     private final JwtUtil jwtUtil;
 
-    public ResponseEntity<TokenPairDto> register(RegisterRequestDto request) {
+    public ResponseEntity<RegisterResponseDto> register(RegisterRequestDto request) {
 
         AppUser appUser = AppUser.builder()
                 .firstName(request.getFirstName())
@@ -57,10 +55,19 @@ public class AuthenticationService {
         TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        return new ResponseEntity<>(tokenPair, HttpStatus.CREATED);
+        RegisterResponseDto response = RegisterResponseDto.builder()
+                .firstName(appUser.getFirstName())
+                .lastName(appUser.getLastName())
+                .email(securityUser.getEmail())
+                .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
+                .accessToken(tokenPair.getToken())
+                .refreshToken(tokenPair.getRefreshToken())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<TokenPairDto> login(LoginRequestDto request) {
+    public ResponseEntity<LoginResponseDto> login(LoginRequestDto request) {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -76,7 +83,16 @@ public class AuthenticationService {
         TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        return new ResponseEntity<>(tokenPair, HttpStatus.OK);
+        LoginResponseDto response = LoginResponseDto.builder()
+                .firstName(securityUser.getAppUser().getFirstName())
+                .lastName(securityUser.getAppUser().getLastName())
+                .email(securityUser.getEmail())
+                .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
+                .accessToken(tokenPair.getToken())
+                .refreshToken(tokenPair.getRefreshToken())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public ResponseEntity<TokenPairDto> refreshToken(HttpServletRequest request) {
