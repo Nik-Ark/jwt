@@ -71,7 +71,7 @@ public class JwtUtil {
     public TokenPairDto generateTokenPair(UserDetails userDetails) {
         final String userName = userDetails.getUsername();
         return TokenPairDto.builder()
-                .token(generateToken(userName, JWT_LIVE_TIME))
+                .accessToken(generateToken(userName, JWT_LIVE_TIME))
                 .refreshToken(generateToken(userName, JWT_REFRESH_LIVE_TIME))
                 .build();
     }

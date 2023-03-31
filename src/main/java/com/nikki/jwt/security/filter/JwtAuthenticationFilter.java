@@ -46,7 +46,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // BUT INSTEAD IT IS BETTER TO IMPROVE LOGIC HERE
         // FIRST I SHOULD CHECK IF THIS TOKEN IS PRESENT IN THE DATABASE
         // AND AFTER GET USERNAME FROM IT
-        final String userEmail = jwtUtil.extractUsername(jwt);
+        final String userEmail;
+        try {
+            userEmail = jwtUtil.extractUsername(jwt);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+            System.out.println(e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // КОНТЕКСТ УСТАНАВЛИВАЕТСЯ КАЖДЫЙ РАЗ С КАЖДЫМ ЗАПРОСОМ.
         // ЭТУ ПРОВЕРКУ МОЖНО НЕ ДЕЛАТЬ ЕСЛИ ИСПОЛЬЗУЕТСЯ ТОЛЬКО ОДИН ФИЛЬТР (ЭТОТ)

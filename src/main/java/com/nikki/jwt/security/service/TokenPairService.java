@@ -58,9 +58,9 @@ public class TokenPairService {
     public void saveTokenPair(SecurityUser securityUser, TokenPairDto tokenPair) {
         revokeAllUserTokens(securityUser.getId());
         Token token = Token.builder()
-                .token(tokenPair.getToken())
+                .token(tokenPair.getAccessToken())
                 .securityUser(securityUser)
-                .expiryDate(jwtUtil.extractExpiration(tokenPair.getToken()))
+                .expiryDate(jwtUtil.extractExpiration(tokenPair.getAccessToken()))
                 .build();
         tokenRepository.save(token);
 

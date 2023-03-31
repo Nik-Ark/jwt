@@ -60,7 +60,7 @@ public class AuthenticationService {
                 .lastName(appUser.getLastName())
                 .email(securityUser.getEmail())
                 .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
-                .accessToken(tokenPair.getToken())
+                .accessToken(tokenPair.getAccessToken())
                 .refreshToken(tokenPair.getRefreshToken())
                 .build();
 
@@ -88,7 +88,7 @@ public class AuthenticationService {
                 .lastName(securityUser.getAppUser().getLastName())
                 .email(securityUser.getEmail())
                 .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
-                .accessToken(tokenPair.getToken())
+                .accessToken(tokenPair.getAccessToken())
                 .refreshToken(tokenPair.getRefreshToken())
                 .build();
 
