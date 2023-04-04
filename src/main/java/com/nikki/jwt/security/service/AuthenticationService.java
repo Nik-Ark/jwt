@@ -95,7 +95,7 @@ public class AuthenticationService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<TokenPairDto> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<RefreshResponseDto> refreshToken(HttpServletRequest request) {
 
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
@@ -108,23 +108,30 @@ public class AuthenticationService {
             throw new BadCredentialsException("Correct Jwt Refresh token is not provided");
         }
 
-        final String userEmail = jwtUtil.extractUsername(refreshJwt);
+
+        final String userEmail;
+        try {
+            userEmail = jwtUtil.extractUsername(refreshJwt);
+        } catch (Exception e) {
+            throw new BadCredentialsException("Correct Jwt Refresh token is not provided");
+        }
 
         SecurityUser securityUser = securityUserRepository
                 .findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User with email: " + userEmail + " not found"));
 
-        // !!!!!! CAN I EVER REACH THIS LINE OF CODE IN CASE WHEN PROVIDED TOKEN IS EXPIRED ?????????
-        // NO, BECAUSE EXTRACT ALL CLAIMS .parseClaimsJws(token) THROWS EXCEPTION(s) WHEN TOKEN EXPIRED OR ...
-
-        if (!jwtUtil.isTokenValid(refreshJwt, securityUser)) {
-            System.out.println("INVALID_JWT_REFRESH_TOKEN ");
-            throw new RuntimeException("Yes I Can");
-        }
-
         TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        return new ResponseEntity<>(tokenPair, HttpStatus.OK);
+        RefreshResponseDto response = RefreshResponseDto.builder()
+                .firstName(securityUser.getAppUser().getFirstName())
+                .lastName(securityUser.getAppUser().getLastName())
+                .email(securityUser.getEmail())
+                .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
+                .accessToken(tokenPair.getAccessToken())
+                .refreshToken(tokenPair.getRefreshToken())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

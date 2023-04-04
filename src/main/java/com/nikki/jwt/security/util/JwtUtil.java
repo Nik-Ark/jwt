@@ -31,11 +31,11 @@ public class JwtUtil {
         this.JWT_REFRESH_LIVE_TIME = JWT_REFRESH_LIVE_TIME;
     }
 
-    public String extractUsername(String token) {
+    public String extractUsername(String token) throws Exception {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+    public <T> T extractClaim(String token, Function<Claims, T> claimResolver) throws Exception {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
@@ -76,20 +76,20 @@ public class JwtUtil {
                 .build();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, UserDetails userDetails) throws Exception {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) throws Exception {
         return extractExpiration(token).before(new Date());
     }
 
-    public Date extractExpiration(String token) {
+    public Date extractExpiration(String token) throws Exception {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token) throws Exception {
         Claims claims;
         try {
             claims = Jwts

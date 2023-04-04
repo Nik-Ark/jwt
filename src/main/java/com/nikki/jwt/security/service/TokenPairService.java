@@ -57,18 +57,28 @@ public class TokenPairService {
 
     public void saveTokenPair(SecurityUser securityUser, TokenPairDto tokenPair) {
         revokeAllUserTokens(securityUser.getId());
-        Token token = Token.builder()
-                .token(tokenPair.getAccessToken())
-                .securityUser(securityUser)
-                .expiryDate(jwtUtil.extractExpiration(tokenPair.getAccessToken()))
-                .build();
+        Token token = null;
+        try {
+            token = Token.builder()
+                    .token(tokenPair.getAccessToken())
+                    .securityUser(securityUser)
+                    .expiryDate(jwtUtil.extractExpiration(tokenPair.getAccessToken()))
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't save token in DB" + e.getMessage());
+        }
         tokenRepository.save(token);
 
-        RefreshToken refreshToken = RefreshToken.builder()
-                .token(tokenPair.getRefreshToken())
-                .securityUser(securityUser)
-                .expiryDate(jwtUtil.extractExpiration(tokenPair.getRefreshToken()))
-                .build();
+        RefreshToken refreshToken = null;
+        try {
+            refreshToken = RefreshToken.builder()
+                    .token(tokenPair.getRefreshToken())
+                    .securityUser(securityUser)
+                    .expiryDate(jwtUtil.extractExpiration(tokenPair.getRefreshToken()))
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't save token in DB" + e.getMessage());
+        }
         refreshTokenRepository.save(refreshToken);
     }
 }

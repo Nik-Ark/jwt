@@ -46,6 +46,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // BUT INSTEAD IT IS BETTER TO IMPROVE LOGIC HERE
         // FIRST I SHOULD CHECK IF THIS TOKEN IS PRESENT IN THE DATABASE
         // AND AFTER GET USERNAME FROM IT
+
+        // I CHECKED AND IT TURNS OUT EVEN IF TOKEN IS NOT IN THE DATABASE, JWT_UTIL WILL FIGURE OUT
+        // IF THIS TOKEN IS EXPIRED (BECAUSE IT VALIDATES RECEIVED TOKEN WITH SECRET SIGNATURE
+        // OTHER TOKEN PROPERTIES WILL BE VALIDATED ALSO.
         final String userEmail;
         try {
             userEmail = jwtUtil.extractUsername(jwt);
@@ -70,21 +74,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .map(token -> !token.isRevoked())
                     .orElse(false);
 
-            if (jwtUtil.isTokenValid(jwt, securityUser) && tokenNotRevoked) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        securityUser,
-                        null,
-                        securityUser.getAuthorities()
-                );
+            try {
+                if (jwtUtil.isTokenValid(jwt, securityUser) && tokenNotRevoked) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            securityUser,
+                            null,
+                            securityUser.getAuthorities()
+                    );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                System.out.println("Security Context Was Set for username " + userEmail);
+                    System.out.println("Security Context Was Set for username " + userEmail);
+                }
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+                System.out.println(e.getMessage());
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

@@ -28,7 +28,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<TokenPairDto> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<RefreshResponseDto> refreshToken(HttpServletRequest request) {
         System.out.println(SecurityContextHolder.getContext().getAuthentication());
         return authenticationService.refreshToken(request);
     }
