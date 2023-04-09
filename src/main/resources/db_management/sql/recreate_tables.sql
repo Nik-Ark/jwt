@@ -46,11 +46,11 @@ CREATE TABLE roles
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
 
--- INSERT INTO roles
--- VALUES (1, 'CLIENT'),
---        (2, 'MANAGER'),
---        (3, 'ADMIN'),
---        (4, 'DEVELOPER');
+INSERT INTO roles
+VALUES (1, 'CLIENT'),
+       (2, 'MANAGER'),
+       (3, 'ADMIN'),
+       (4, 'DEVELOPER');
 
 CREATE TABLE security_users_roles
 (
@@ -62,10 +62,7 @@ CREATE TABLE security_users_roles
 INSERT INTO security_users_roles
 VALUES (1, 1),
        (2, 2),
-       (2, 1),
        (3, 3),
-       (3, 2),
-       (3, 1),
        (4, 4);
 
 CREATE TABLE tokens

@@ -13,13 +13,13 @@ public class SchedulerService {
     private final TokenPairService tokenPairService;
 
     // PLANNED DELETION OF EXPIRED TOKENS FROM DATABASE
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(fixedRate = 1200000)
     public void scheduledExpiredTokensDeletion() {
         tokenPairService.deleteAllExpiredTokens();
     }
 
     // PLANNED DELETION OF EXPIRED REFRESH TOKENS FROM DATABASE
-    @Scheduled(fixedRate = 240000)
+    @Scheduled(fixedRate = 2400000)
     public void scheduledExpiredRefreshTokensDeletion() {
         tokenPairService.deleteAllExpiredRefreshTokens();
     }

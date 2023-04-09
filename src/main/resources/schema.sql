@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS roles
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
 
-INSERT INTO roles
-VALUES (1, 'CLIENT'),
-       (2, 'MANAGER'),
-       (3, 'ADMIN'),
-       (4, 'DEVELOPER');
+-- INSERT INTO roles
+-- VALUES (1, 'CLIENT'),
+--        (2, 'MANAGER'),
+--        (3, 'ADMIN'),
+--        (4, 'DEVELOPER');
 
 CREATE TABLE IF NOT EXISTS security_users_roles
 (
