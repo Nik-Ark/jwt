@@ -1,6 +1,5 @@
 package com.nikki.jwt.security.entity;
 
-import com.nikki.jwt.app.entity.AppUser;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,10 +20,6 @@ import java.util.stream.Collectors;
 @Table(name = "security_users")
 public class SecurityUser implements UserDetails {
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "app_user_id")
-    private AppUser appUser;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -35,6 +30,12 @@ public class SecurityUser implements UserDetails {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "security_users_roles",
@@ -86,6 +87,8 @@ public class SecurityUser implements UserDetails {
         return "SecurityUser {" +
                 "id: " + id +
                 ", email: '" + email + '\'' +
+                ", firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
                 ", roles: " + roles +
                 '}';
     }

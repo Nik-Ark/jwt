@@ -1,6 +1,5 @@
 package com.nikki.jwt.security.service;
 
-import com.nikki.jwt.app.entity.AppUser;
 import com.nikki.jwt.security.dto.*;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.Role;
@@ -34,20 +33,16 @@ public class AuthenticationService {
 
     public ResponseEntity<RegisterResponseDto> register(RegisterRequestDto request) {
 
-        AppUser appUser = AppUser.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .build();
-
         Optional<Role> retrievedRole = roleRepository.findByName("CLIENT");
         Set<Role> roles = new HashSet<>();
         retrievedRole.ifPresent(roles::add);
 
         SecurityUser securityUser = SecurityUser.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
-                .appUser(appUser)
                 .tokens(new ArrayList<>())
                 .build();
         securityUserRepository.save(securityUser);
@@ -56,8 +51,8 @@ public class AuthenticationService {
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
         RegisterResponseDto response = RegisterResponseDto.builder()
-                .firstName(appUser.getFirstName())
-                .lastName(appUser.getLastName())
+                .firstName(securityUser.getFirstName())
+                .lastName(securityUser.getLastName())
                 .email(securityUser.getEmail())
                 .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
                 .accessToken(tokenPair.getAccessToken())
@@ -84,8 +79,8 @@ public class AuthenticationService {
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
         LoginResponseDto response = LoginResponseDto.builder()
-                .firstName(securityUser.getAppUser().getFirstName())
-                .lastName(securityUser.getAppUser().getLastName())
+                .firstName(securityUser.getFirstName())
+                .lastName(securityUser.getLastName())
                 .email(securityUser.getEmail())
                 .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
                 .accessToken(tokenPair.getAccessToken())
@@ -124,8 +119,8 @@ public class AuthenticationService {
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
         RefreshResponseDto response = RefreshResponseDto.builder()
-                .firstName(securityUser.getAppUser().getFirstName())
-                .lastName(securityUser.getAppUser().getLastName())
+                .firstName(securityUser.getFirstName())
+                .lastName(securityUser.getLastName())
                 .email(securityUser.getEmail())
                 .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
                 .accessToken(tokenPair.getAccessToken())
