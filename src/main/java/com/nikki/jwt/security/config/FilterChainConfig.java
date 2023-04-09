@@ -35,7 +35,7 @@ public class FilterChainConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/demo/client/**").hasRole("CLIENT")
-                .requestMatchers("/api/v1/demo/manager/**").hasRole("MANAGER")
+                .requestMatchers("/api/v1/manager/**").hasRole("MANAGER")
                 .requestMatchers("/api/v1/demo/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/demo/developer/**").hasRole("DEVELOPER")
                 .anyRequest().authenticated()

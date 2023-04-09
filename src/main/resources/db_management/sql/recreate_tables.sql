@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS security_users;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS security_users_roles;
+DROP TABLE IF EXISTS clients;
 
 CREATE TABLE security_users
 (
@@ -71,3 +72,16 @@ CREATE TABLE refresh_tokens
     PRIMARY KEY         (id),
     FOREIGN KEY         (security_user_id)  REFERENCES jwt_user_db.security_users(id)
 ) COLLATE utf8_bin;
+
+CREATE TABLE clients
+(
+    email           VARCHAR(45)     NOT NULL,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
+    phone_number    VARCHAR(45)             ,
+    city            VARCHAR(45)             ,
+    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY     (email)
+) COLLATE utf8_bin;
+INSERT INTO clients (email, first_name, last_name, phone_number, city)
+VALUES ('user1', 'name1', 'surname1', '+9984557898', 'Samarkand');

@@ -51,3 +51,14 @@ CREATE TABLE IF NOT EXISTS refresh_tokens
     PRIMARY KEY         (id),
     FOREIGN KEY         (security_user_id)  REFERENCES jwt_user_db.security_users(id)
 ) COLLATE utf8_bin;
+
+CREATE TABLE IF NOT EXISTS clients
+(
+    email           VARCHAR(45)     NOT NULL,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
+    phone_number    VARCHAR(45)             ,
+    city            VARCHAR(45)             ,
+    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY     (email)
+) COLLATE utf8_bin;

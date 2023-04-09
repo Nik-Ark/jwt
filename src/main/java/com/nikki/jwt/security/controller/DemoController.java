@@ -16,15 +16,11 @@ public class DemoController {
 
         // WILL RETURN: UsernamePasswordAuthenticationToken (WITH ALL THE DETAILS INSIDE IT)
         System.out.println(SecurityContextHolder.getContext().getAuthentication());
-        return "Client Demo Page";
-    }
-
-    @GetMapping("/manager")
-    public String demoManager() {
 
         // WILL RETURN USERNAME (USER-EMAIL IN MY APPLICATION)
         System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
-        return "Manager Demo Page";
+
+        return "Client Demo Page";
     }
 
     @GetMapping("/admin")
