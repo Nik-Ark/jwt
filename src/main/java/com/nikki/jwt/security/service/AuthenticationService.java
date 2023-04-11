@@ -6,6 +6,7 @@ import com.nikki.jwt.security.domen.api.login.LoginRequest;
 import com.nikki.jwt.security.domen.api.login.LoginResponse;
 import com.nikki.jwt.security.domen.api.register.RegisterRequest;
 import com.nikki.jwt.security.domen.api.register.RegisterResponse;
+import com.nikki.jwt.security.domen.response.exception.HandledException;
 import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.Role;
@@ -45,9 +46,11 @@ public class AuthenticationService {
 
         validationUtil.validationRequest(request);
 
-        String email = request.getEmail();
-        if (securityUserRepository.existsByEmail(email)) {
-            throw new BadCredentialsException("User already registered");
+        if (securityUserRepository.existsByEmail(request.getEmail())) {
+            throw HandledException.builder()
+                    .message("This nickname already exists, please enter another nickname")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
         }
 
         Optional<Role> retrievedRole = roleRepository.findByName("CLIENT");
@@ -99,6 +102,9 @@ public class AuthenticationService {
 
     public ResponseEntity<LoginResponse> login(LoginRequest request) {
 
+//        DEFAULT USERS MUST USE SECURE PASSWORDS AND CORRECT EMAILS
+//        validationUtil.validationRequest(request);
+
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     request.getEmail(),
@@ -131,6 +137,7 @@ public class AuthenticationService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /*    THIS METHOD WILL BE VOID WHEN REFRESHTOKEN RETURNS IN COOKIE      */
     public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request) {
 
         final String authHeader = request.getHeader("Authorization");

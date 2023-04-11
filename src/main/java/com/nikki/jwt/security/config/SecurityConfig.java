@@ -43,16 +43,8 @@ public class SecurityConfig {
             response.setContentType("application/json;charset=UTF-8");
             System.out.println("From AuthenticationEntryPoint: " + response.getStatus());
             System.out.println("From AuthenticationEntryPoint: " + authException.getMessage());
-            if (response.getStatus() == 403) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Forbidden");
-            } else if (response.getStatus() == 417) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Forbidden");
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Authentication Error");
-            }
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("Forbidden");
         };
     }
 

@@ -54,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             userEmail = jwtUtil.extractUsername(jwt);
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
             System.out.println(e.getMessage());
             filterChain.doFilter(request, response);
             return;
@@ -89,7 +88,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     System.out.println("Security Context Was Set for username " + userEmail);
                 }
             } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
                 System.out.println(e.getMessage());
             }
         }

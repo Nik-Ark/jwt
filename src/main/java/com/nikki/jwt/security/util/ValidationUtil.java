@@ -1,8 +1,9 @@
 package com.nikki.jwt.security.util;
 
+import com.nikki.jwt.security.domen.response.exception.HandledException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -26,7 +27,10 @@ public class ValidationUtil {
                         .map(ConstraintViolation::getMessage)
                         .reduce((acc, curr) -> acc + ". " + curr).orElse("");
                 System.out.println("invalid json in request registration, validation errors: " + violations);
-                throw new BadCredentialsException(violations);
+                throw HandledException.builder()
+                        .message(violations)
+                        .httpStatus(HttpStatus.BAD_REQUEST)
+                        .build();
             }
         }
     }
