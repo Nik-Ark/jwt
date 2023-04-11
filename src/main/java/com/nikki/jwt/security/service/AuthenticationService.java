@@ -1,6 +1,11 @@
 package com.nikki.jwt.security.service;
 
-import com.nikki.jwt.security.dto.*;
+import com.nikki.jwt.security.domen.api.RefreshResponse;
+import com.nikki.jwt.security.domen.api.TokenPair;
+import com.nikki.jwt.security.domen.api.login.LoginRequest;
+import com.nikki.jwt.security.domen.api.login.LoginResponse;
+import com.nikki.jwt.security.domen.api.register.RegisterRequest;
+import com.nikki.jwt.security.domen.api.register.RegisterResponse;
 import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.Role;
@@ -36,7 +41,7 @@ public class AuthenticationService {
     private final JwtUtil jwtUtil;
     private final ValidationUtil validationUtil;
 
-    public ResponseEntity<RegisterResponseDto> register(RegisterRequestDto request) {
+    public ResponseEntity<RegisterResponse> register(RegisterRequest request) {
 
         validationUtil.validationRequest(request);
 
@@ -77,10 +82,10 @@ public class AuthenticationService {
         clientRepository.save(client);
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
+        TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        RegisterResponseDto response = RegisterResponseDto.builder()
+        RegisterResponse response = RegisterResponse.builder()
                 .firstName(securityUser.getFirstName())
                 .lastName(securityUser.getLastName())
                 .email(securityUser.getEmail())
@@ -92,7 +97,7 @@ public class AuthenticationService {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<LoginResponseDto> login(LoginRequestDto request) {
+    public ResponseEntity<LoginResponse> login(LoginRequest request) {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -111,10 +116,10 @@ public class AuthenticationService {
         );
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
+        TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        LoginResponseDto response = LoginResponseDto.builder()
+        LoginResponse response = LoginResponse.builder()
                 .firstName(securityUser.getFirstName())
                 .lastName(securityUser.getLastName())
                 .email(securityUser.getEmail())
@@ -126,7 +131,7 @@ public class AuthenticationService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<RefreshResponseDto> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request) {
 
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
@@ -151,10 +156,10 @@ public class AuthenticationService {
                 .findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User with email: " + userEmail + " not found"));
 
-        TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
+        TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        RefreshResponseDto response = RefreshResponseDto.builder()
+        RefreshResponse response = RefreshResponse.builder()
                 .firstName(securityUser.getFirstName())
                 .lastName(securityUser.getLastName())
                 .email(securityUser.getEmail())

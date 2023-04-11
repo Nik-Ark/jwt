@@ -1,11 +1,11 @@
-package com.nikki.jwt.security.dto;
+package com.nikki.jwt.security.domen.api;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class LoginResponseDto {
+public class RefreshResponse {
 
     private String firstName;
     private String lastName;

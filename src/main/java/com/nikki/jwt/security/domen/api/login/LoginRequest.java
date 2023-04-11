@@ -1,11 +1,11 @@
-package com.nikki.jwt.security.dto;
+package com.nikki.jwt.security.domen.api.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LoginRequestDto {
+public class LoginRequest {
 
     private String email;
     private String password;

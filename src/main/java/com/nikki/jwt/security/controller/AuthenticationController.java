@@ -1,6 +1,10 @@
 package com.nikki.jwt.security.controller;
 
-import com.nikki.jwt.security.dto.*;
+import com.nikki.jwt.security.domen.api.RefreshResponse;
+import com.nikki.jwt.security.domen.api.login.LoginRequest;
+import com.nikki.jwt.security.domen.api.login.LoginResponse;
+import com.nikki.jwt.security.domen.api.register.RegisterRequest;
+import com.nikki.jwt.security.domen.api.register.RegisterResponse;
 import com.nikki.jwt.security.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +20,19 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDto> register(@RequestBody RegisterRequestDto request) {
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
         System.out.println(SecurityContextHolder.getContext().getAuthentication());
         return authenticationService.register(request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         System.out.println(SecurityContextHolder.getContext().getAuthentication());
         return authenticationService.login(request);
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<RefreshResponseDto> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request) {
         System.out.println(SecurityContextHolder.getContext().getAuthentication());
         return authenticationService.refreshToken(request);
     }

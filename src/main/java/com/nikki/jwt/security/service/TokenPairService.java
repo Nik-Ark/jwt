@@ -1,6 +1,6 @@
 package com.nikki.jwt.security.service;
 
-import com.nikki.jwt.security.dto.TokenPairDto;
+import com.nikki.jwt.security.domen.api.TokenPair;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.entity.Token;
@@ -55,7 +55,7 @@ public class TokenPairService {
         }
     }
 
-    public void saveTokenPair(SecurityUser securityUser, TokenPairDto tokenPair) {
+    public void saveTokenPair(SecurityUser securityUser, TokenPair tokenPair) {
         revokeAllUserTokens(securityUser.getId());
         Token token = null;
         try {

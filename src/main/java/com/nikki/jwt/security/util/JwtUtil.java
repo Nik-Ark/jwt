@@ -1,6 +1,6 @@
 package com.nikki.jwt.security.util;
 
-import com.nikki.jwt.security.dto.TokenPairDto;
+import com.nikki.jwt.security.domen.api.TokenPair;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -68,9 +68,9 @@ public class JwtUtil {
                 .compact(); // generates and returns Token
     }
 
-    public TokenPairDto generateTokenPair(UserDetails userDetails) {
+    public TokenPair generateTokenPair(UserDetails userDetails) {
         final String userName = userDetails.getUsername();
-        return TokenPairDto.builder()
+        return TokenPair.builder()
                 .accessToken(generateToken(userName, JWT_LIVE_TIME))
                 .refreshToken(generateToken(userName, JWT_REFRESH_LIVE_TIME))
                 .build();
