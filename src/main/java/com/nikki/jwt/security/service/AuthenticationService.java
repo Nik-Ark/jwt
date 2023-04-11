@@ -9,6 +9,7 @@ import com.nikki.jwt.security.repository.ClientRepository;
 import com.nikki.jwt.security.repository.RoleRepository;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
 import com.nikki.jwt.security.util.JwtUtil;
+import com.nikki.jwt.security.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,13 +34,29 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final TokenPairService tokenPairService;
     private final JwtUtil jwtUtil;
+    private final ValidationUtil validationUtil;
 
     public ResponseEntity<RegisterResponseDto> register(RegisterRequestDto request) {
+
+        validationUtil.validationRequest(request);
+
+        String email = request.getEmail();
+        if (securityUserRepository.existsByEmail(email)) {
+            throw new BadCredentialsException("User already registered");
+        }
 
         Optional<Role> retrievedRole = roleRepository.findByName("CLIENT");
         Set<Role> roles = new HashSet<>();
         retrievedRole.ifPresent(roles::add);
 
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        /*                                                                                       */
+        /*               ВЫНЕСТИ В ОТДЕЛЬНЫЕ МЕТОДЫ СОЗДАНИЕ КЛИЕНТА, МЕНЕДЖЕРА.                 */
+        /*                       МЕТОДЫ ЗАЩИЩЁННЫЕ АННОТАЦИЕЙ ПО ПРАВАМ.                         */
+        /*                                 1). ВАЛИДАЦИЯ.                                        */
+        /*         2). ЧТО ЕСЛИ EMAIL УЖЕ СУЩЕСТВУЕТ, ВЫБРОСИТЬ ОШИБКУ С ОПИСАНИЕМ.              */
+        /*                                                                                       */
+        ///////////////////////////////////////////////////////////////////////////////////////////
         SecurityUser securityUser = SecurityUser.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -58,6 +75,7 @@ public class AuthenticationService {
                 .city("Moscow")
                 .build();
         clientRepository.save(client);
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
         TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
@@ -83,9 +101,15 @@ public class AuthenticationService {
             )
         );
 
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        /*                                                                                       */
+        /*       ОБРАБАТЫВАТЬ ЭТОТ EXCEPTION ЧТОБЫ СЕРВЕР ВОЗВРАЩАЛ ОШИБКУ USER_NOT_FOUND        */
+        /*                                                                                       */
+        ///////////////////////////////////////////////////////////////////////////////////////////
         SecurityUser securityUser = securityUserRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new UsernameNotFoundException("User with email: " + request.getEmail() + " not found")
         );
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
         TokenPairDto tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);

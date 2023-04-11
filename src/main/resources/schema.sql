@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS security_users
     first_name      VARCHAR(45)     NOT NULL,
     last_name       VARCHAR(45)     NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    app_user_id     BIGINT,
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
 
