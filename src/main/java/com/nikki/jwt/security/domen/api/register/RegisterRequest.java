@@ -30,4 +30,13 @@ public class RegisterRequest {
     @NotBlank(message = "password is required")
     @Pattern(regexp = RegExp.password, message = "invalid password format")
     private String password;
+
+    @Override
+    public String toString() {
+        return "RegisterRequest: {" +
+                " firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
+                ", email: '" + email + '\'' +
+                " " + '}';
+    }
 }

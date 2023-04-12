@@ -20,4 +20,11 @@ public class LoginRequest {
     @NotBlank(message = "password is required")
     @Pattern(regexp = RegExp.password, message = "invalid password format")
     private String password;
+
+    @Override
+    public String toString() {
+        return "LoginRequest: {" +
+                " email: '" + email + '\'' +
+                " " + '}';
+    }
 }

@@ -1,18 +1,20 @@
 package com.nikki.jwt.security.domen.response.exception;
 
 import com.nikki.jwt.security.domen.response.error.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@Slf4j
 @ControllerAdvice
 public class AppExceptionsHandler {
 
     @ExceptionHandler(HandledException.class)
     public ResponseEntity<ErrorResponse> handleHandledException(HandledException ex) {
-        System.out.println(ex.toString());
+        log.error("{}", ex.toString());
         return new ResponseEntity<>(
                 ErrorResponse.builder()
                         .message(ex.getMessage())
@@ -23,8 +25,7 @@ public class AppExceptionsHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(Exception ex) {
-        System.out.println("From Exception Handler:");
-        System.out.println("Authentication exception: " + ex.toString());
+        log.error("AuthenticationException after JWT Filter: {}", ex.toString());
         return new ResponseEntity<>(
                 ErrorResponse.builder()
                         .message(ex.getMessage())
@@ -35,8 +36,7 @@ public class AppExceptionsHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception ex) {
-        ex.printStackTrace();
-        System.out.println("internal server error: " + ex.toString());
+        log.error("UnexpectedException: {}", ex.toString());
         return new ResponseEntity<>(
                 ErrorResponse.builder()
                         .message("Internal Server Error")

@@ -18,13 +18,11 @@ public class RegisterResponse {
 
     @Override
     public String toString() {
-        return "RegisterResponse{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", roles=" + Arrays.toString(roles) +
-                ", accessToken='" + accessToken + '\'' +
-                ", refreshToken='" + refreshToken + '\'' +
-                '}';
+        return "RegisterResponse: {" +
+                " firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
+                ", email: '" + email + '\'' +
+                ", roles: " + Arrays.toString(roles) +
+                " " + '}';
     }
 }

@@ -24,8 +24,8 @@ public class HandledException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "HandledException {" +
-                "message: " + getMessage() +
+        return "HandledException: {" +
+                " message: " + getMessage() +
                 ", cause: " + getCause() +
                 ", httpStatus: " + getHttpStatus() +
                 " " + '}';

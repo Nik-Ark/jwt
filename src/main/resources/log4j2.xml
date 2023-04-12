@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-30d %p [%t] %-30.30C: %msg%n%throwable" />
+        </Console>
+
+        <RollingFile name="fileAppender" fileName="./logs/app-log4j2.log"
+                     filePattern="./logs/app-%d{-dd-MMMM-yyyy}-%i.log4j2.log.gz">
+            <PatternLayout pattern="%d %p [%t] %C: %msg%n%throwable" />
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.nikki.jwt.security.controller" level="trace" additivity="false">
+            <AppenderRef ref="consoleAppender" />
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="consoleAppender" />
+            <AppenderRef ref="fileAppender" />
+        </Root>
+    </Loggers>
+</Configuration>
