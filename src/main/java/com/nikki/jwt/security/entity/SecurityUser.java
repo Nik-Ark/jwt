@@ -84,12 +84,12 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public String toString() {
-        return "SecurityUser {" +
-                "id: " + id +
+        return "SecurityUser: {" +
+                " id: " + id +
                 ", email: '" + email + '\'' +
                 ", firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 ", roles: " + roles +
-                '}';
+                " " + '}';
     }
 }

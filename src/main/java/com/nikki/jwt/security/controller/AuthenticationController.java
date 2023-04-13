@@ -29,6 +29,7 @@ public class AuthenticationController {
 
         WILL RETURN: UsernamePasswordAuthenticationToken (WITH ALL THE DETAILS INSIDE IT)
         SecurityContextHolder.getContext().getAuthentication();
+
         WILL RETURN USERNAME (USER-EMAIL IN MY APPLICATION)
         SecurityContextHolder.getContext().getAuthentication().getName();
 

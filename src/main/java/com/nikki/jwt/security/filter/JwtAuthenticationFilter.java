@@ -87,7 +87,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                    log.trace("Security Context Was Set for SecurityUser email {}", userEmail);
+                    log.info("Security Context Was Set for Principal: {}.",
+                            SecurityContextHolder.getContext().getAuthentication().getPrincipal());
                 }
             } catch (Exception ex) {
                 log.error("From JWT Authentication Filter: {}", ex.getMessage());

@@ -1,7 +1,7 @@
 package com.nikki.jwt.security.controller;
 
-import com.nikki.jwt.security.entity.Client;
-import com.nikki.jwt.security.service.ClientService;
+import com.nikki.jwt.security.entity.Manager;
+import com.nikki.jwt.security.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,19 +15,19 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/client")
-public class ClientController {
+@RequestMapping("api/v1/manager")
+public class ManagerController {
 
-    private final ClientService clientService;
+    private final ManagerService managerService;
 
     @GetMapping("/get")
-    public List<Client> getClients(@RequestParam(defaultValue = "20") Integer count) {
-        log.info("START endpoint client/get, request sent by principal: {}, with request param: {}",
+    public List<Manager> getManagers(@RequestParam(defaultValue = "20") Integer count) {
+        log.info("START endpoint manager/get, request sent by principal: {}, with request param: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), count);
 
-        List<Client> clients = clientService.getClients(count);
+        List<Manager> managers = managerService.getManagers(count);
 
-        log.info("END endpoint client/get, success response containing {} clients.", clients.size());
-        return clients;
+        log.info("END endpoint manager/get, success response containing {} managers.", managers.size());
+        return managers;
     }
 }

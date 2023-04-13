@@ -12,8 +12,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "clients")
-public class Client {
+@Table(name = "admins")
+public class Admin {
 
     @Id
     @Column(name = "email")
@@ -25,20 +25,12 @@ public class Client {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    @Column(name = "city")
-    private String city;
-
     @Override
     public String toString() {
-        return "Client: {" +
+        return "Admin: {" +
                 " email: '" + email + '\'' +
                 ", firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
-                ", phoneNumber: '" + phoneNumber + '\'' +
-                ", city='" + city + '\'' +
                 " " + '}';
     }
 }
