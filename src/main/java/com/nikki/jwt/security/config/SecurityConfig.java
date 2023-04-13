@@ -3,6 +3,7 @@ package com.nikki.jwt.security.config;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+@Slf4j
 @Configuration
 public class SecurityConfig {
 
@@ -41,8 +43,7 @@ public class SecurityConfig {
     AuthenticationEntryPoint authenticationEntryPoint() {
         return (HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) -> {
             response.setContentType("application/json;charset=UTF-8");
-            System.out.println("From AuthenticationEntryPoint: " + response.getStatus());
-            System.out.println("From AuthenticationEntryPoint: " + authException.getMessage());
+            log.error("From AuthenticationEntryPoint: { message: {} }.", authException.getMessage());
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("Forbidden");
         };

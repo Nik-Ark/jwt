@@ -19,6 +19,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 
+    /*
+
+        WILL RETURN SECURITY USER: SecurityUser {id: 4, email: 'user4', roles: [Role: {name: 'DEVELOPER'}]}
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        WILL RETURN: WebAuthenticationDetails [RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=null]
+        SecurityContextHolder.getContext().getAuthentication().getDetails();
+
+        WILL RETURN: UsernamePasswordAuthenticationToken (WITH ALL THE DETAILS INSIDE IT)
+        SecurityContextHolder.getContext().getAuthentication();
+        WILL RETURN USERNAME (USER-EMAIL IN MY APPLICATION)
+        SecurityContextHolder.getContext().getAuthentication().getName();
+
+    */
+
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")

@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS security_users;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS security_users_roles;
 DROP TABLE IF EXISTS clients;
+DROP TABLE IF EXISTS managers;
+DROP TABLE IF EXISTS admins;
 
 CREATE TABLE security_users
 (
@@ -33,8 +35,7 @@ CREATE TABLE roles
 INSERT INTO roles
 VALUES (1, 'CLIENT'),
        (2, 'MANAGER'),
-       (3, 'ADMIN'),
-       (4, 'DEVELOPER');
+       (3, 'ADMIN');
 
 CREATE TABLE security_users_roles
 (
@@ -46,8 +47,7 @@ CREATE TABLE security_users_roles
 INSERT INTO security_users_roles
 VALUES (1, 1),
        (2, 2),
-       (3, 3),
-       (4, 4);
+       (3, 3);
 
 CREATE TABLE tokens
 (
@@ -82,4 +82,27 @@ CREATE TABLE clients
     PRIMARY KEY     (email)
 ) COLLATE utf8_bin;
 INSERT INTO clients (email, first_name, last_name, phone_number, city)
-VALUES ('user1', 'name1', 'surname1', '+9984557898', 'Samarkand');
+VALUES ('user1', 'name1', 'surname1', '+9981111111', 'Samarkand');
+
+CREATE TABLE managers
+(
+    email           VARCHAR(45)     NOT NULL,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
+    phone_number    VARCHAR(45)             ,
+    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY     (email)
+) COLLATE utf8_bin;
+INSERT INTO managers (email, first_name, last_name, phone_number)
+VALUES ('user2', 'name2', 'surname2', '+9982222222');
+
+CREATE TABLE admins
+(
+    email           VARCHAR(45)     NOT NULL,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
+    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY     (email)
+) COLLATE utf8_bin;
+INSERT INTO admins (email, first_name, last_name)
+VALUES ('user3', 'name3', 'surname3');

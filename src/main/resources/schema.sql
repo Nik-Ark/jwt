@@ -19,8 +19,7 @@ CREATE TABLE IF NOT EXISTS roles
 -- INSERT INTO roles
 -- VALUES (1, 'CLIENT'),
 --        (2, 'MANAGER'),
---        (3, 'ADMIN'),
---        (4, 'DEVELOPER');
+--        (3, 'ADMIN');
 
 CREATE TABLE IF NOT EXISTS security_users_roles
 (
@@ -58,6 +57,25 @@ CREATE TABLE IF NOT EXISTS clients
     last_name       VARCHAR(45)     NOT NULL,
     phone_number    VARCHAR(45)             ,
     city            VARCHAR(45)             ,
+    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY     (email)
+) COLLATE utf8_bin;
+
+CREATE TABLE IF NOT EXISTS managers
+(
+    email           VARCHAR(45)     NOT NULL,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
+    phone_number    VARCHAR(45)             ,
+    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY     (email)
+) COLLATE utf8_bin;
+
+CREATE TABLE IF NOT EXISTS admins
+(
+    email           VARCHAR(45)     NOT NULL,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY     (email)
 ) COLLATE utf8_bin;

@@ -4,6 +4,7 @@ import com.nikki.jwt.security.domen.api.TokenPair;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -31,11 +33,11 @@ public class JwtUtil {
         this.JWT_REFRESH_LIVE_TIME = JWT_REFRESH_LIVE_TIME;
     }
 
-    public String extractUsername(String token) throws Exception {
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimResolver) throws Exception {
+    public <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
@@ -76,42 +78,32 @@ public class JwtUtil {
                 .build();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) throws Exception {
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public boolean isTokenExpired(String token) throws Exception {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    public Date extractExpiration(String token) throws Exception {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String token) throws Exception {
-        Claims claims;
+    private Claims extractAllClaims(String token) throws RuntimeException {
+        JwtParser jwtParser = Jwts
+                .parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build();
+        Jws<Claims> jws;
         try {
-            claims = Jwts
-                    .parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (MalformedJwtException e) {
-            System.out.println("From catch in Extract all Claims: Invalid JWT token: " + e.getMessage());
-            throw e;
-        } catch (ExpiredJwtException e) {
-            System.out.println("From catch in Extract all Claims: JWT token is expired: " + e.getMessage());
-            throw e;
-        } catch (UnsupportedJwtException e) {
-            System.out.println("From catch in Extract all Claims: JWT token is unsupported: " + e.getMessage());
-            throw e;
-        } catch (IllegalArgumentException e) {
-            System.out.println("From catch in Extract all Claims: JWT claims string is empty: " + e.getMessage());
-            throw e;
+            jws = jwtParser.parseClaimsJws(token);
+        } catch (Exception ex) {
+            log.error("From extractAllClaims: {}", ex.getMessage());
+            throw ex;
         }
-        return claims;
+        return jws.getBody();
     }
 
     private Key getSigningKey() {

@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-// METHOD AUTHENTICATION BY ADMIN AND MANAGER ROLES HERE
+// METHOD AUTHENTICATION BY ADMIN AND MANAGER ROLES HERE (if needed)
 @RequiredArgsConstructor
 @Service
-public class ManagerService {
+public class ClientService {
 
     private final ClientRepository clientRepository;
 
