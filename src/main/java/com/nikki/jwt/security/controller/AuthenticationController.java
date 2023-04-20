@@ -1,10 +1,10 @@
 package com.nikki.jwt.security.controller;
 
-import com.nikki.jwt.security.domen.api.RefreshResponse;
-import com.nikki.jwt.security.domen.api.login.LoginRequest;
-import com.nikki.jwt.security.domen.api.login.LoginResponse;
-import com.nikki.jwt.security.domen.api.register.RegisterRequest;
-import com.nikki.jwt.security.domen.api.register.RegisterResponse;
+import com.nikki.jwt.security.dto.refresh.RefreshResponse;
+import com.nikki.jwt.security.dto.login.LoginRequest;
+import com.nikki.jwt.security.dto.login.LoginResponse;
+import com.nikki.jwt.security.dto.register.RegisterRequest;
+import com.nikki.jwt.security.dto.register.RegisterResponse;
 import com.nikki.jwt.security.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

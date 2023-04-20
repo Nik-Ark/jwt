@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.domen.api;
+package com.nikki.jwt.security.dto.token;
 
 import lombok.Builder;
 import lombok.Getter;

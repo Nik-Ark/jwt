@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.domen.api.login;
+package com.nikki.jwt.security.dto.register;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 @Getter
 @Builder
-public class LoginResponse {
+public class RegisterResponse {
 
     private String firstName;
     private String lastName;
@@ -18,7 +18,7 @@ public class LoginResponse {
 
     @Override
     public String toString() {
-        return "LoginResponse: {" +
+        return "RegisterResponse: {" +
                 " firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 ", email: '" + email + '\'' +

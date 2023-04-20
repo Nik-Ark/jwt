@@ -1,6 +1,6 @@
 package com.nikki.jwt.security.util;
 
-import com.nikki.jwt.security.domen.api.TokenPair;
+import com.nikki.jwt.security.dto.token.TokenPair;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.domen.api;
+package com.nikki.jwt.security.dto.login;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 @Getter
 @Builder
-public class RefreshResponse {
+public class LoginResponse {
 
     private String firstName;
     private String lastName;
@@ -18,7 +18,7 @@ public class RefreshResponse {
 
     @Override
     public String toString() {
-        return "RefreshResponse: {" +
+        return "LoginResponse: {" +
                 " firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 ", email: '" + email + '\'' +

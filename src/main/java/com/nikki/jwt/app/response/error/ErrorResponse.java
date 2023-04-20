@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.domen.response.error;
+package com.nikki.jwt.app.response.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.domen.api.register;
+package com.nikki.jwt.security.dto.register;
 
 import com.nikki.jwt.security.domen.constant.RegExp;
 import jakarta.validation.constraints.NotBlank;

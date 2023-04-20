@@ -1,6 +1,6 @@
 package com.nikki.jwt.security.service;
 
-import com.nikki.jwt.security.domen.api.TokenPair;
+import com.nikki.jwt.security.dto.token.TokenPair;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.entity.Token;

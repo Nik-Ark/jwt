@@ -38,7 +38,7 @@ public class Client {
                 ", firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 ", phoneNumber: '" + phoneNumber + '\'' +
-                ", city='" + city + '\'' +
+                ", city: '" + city + '\'' +
                 " " + '}';
     }
 }

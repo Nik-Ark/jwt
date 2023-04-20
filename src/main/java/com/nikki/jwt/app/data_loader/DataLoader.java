@@ -1,4 +1,4 @@
-package com.nikki.jwt.data_loader;
+package com.nikki.jwt.app.data_loader;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;

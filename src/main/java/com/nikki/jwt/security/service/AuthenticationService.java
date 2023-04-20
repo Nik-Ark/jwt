@@ -1,12 +1,12 @@
 package com.nikki.jwt.security.service;
 
-import com.nikki.jwt.security.domen.api.RefreshResponse;
-import com.nikki.jwt.security.domen.api.TokenPair;
-import com.nikki.jwt.security.domen.api.login.LoginRequest;
-import com.nikki.jwt.security.domen.api.login.LoginResponse;
-import com.nikki.jwt.security.domen.api.register.RegisterRequest;
-import com.nikki.jwt.security.domen.api.register.RegisterResponse;
-import com.nikki.jwt.security.domen.response.exception.HandledException;
+import com.nikki.jwt.security.dto.refresh.RefreshResponse;
+import com.nikki.jwt.security.dto.register.RegisterRequest;
+import com.nikki.jwt.security.dto.token.TokenPair;
+import com.nikki.jwt.security.dto.login.LoginRequest;
+import com.nikki.jwt.security.dto.login.LoginResponse;
+import com.nikki.jwt.security.dto.register.RegisterResponse;
+import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.Role;
@@ -79,8 +79,6 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .phoneNumber("+79116993890")
-                .city("Moscow")
                 .build();
         clientRepository.save(client);
         ///////////////////////////////////////////////////////////////////////////////////////////

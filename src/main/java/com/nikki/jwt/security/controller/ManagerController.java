@@ -1,5 +1,6 @@
 package com.nikki.jwt.security.controller;
 
+import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.service.ManagerService;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,14 @@ public class ManagerController {
 
     private final ManagerService managerService;
 
-    @GetMapping("/get")
-    public List<Manager> getManagers(@RequestParam(defaultValue = "20") Integer count) {
-        log.info("START endpoint manager/get, request sent by principal: {}, with request param: {}",
+    @GetMapping
+    public List<ManagerResponse> getManagers(@RequestParam(defaultValue = "20") Integer count) {
+        log.info("START endpoint manager (Get), request sent by principal: {}, with request param: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), count);
 
-        List<Manager> managers = managerService.getManagers(count);
+        List<ManagerResponse> managers = managerService.getManagers(count);
 
-        log.info("END endpoint manager/get, success response containing {} managers.", managers.size());
+        log.info("END endpoint manager (Get), success response containing {} managers.", managers.size());
         return managers;
     }
 }

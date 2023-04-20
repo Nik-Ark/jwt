@@ -1,5 +1,6 @@
 package com.nikki.jwt.security.controller;
 
+import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.service.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,14 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @GetMapping("/get")
-    public List<Client> getClients(@RequestParam(defaultValue = "20") Integer count) {
-        log.info("START endpoint client/get, request sent by principal: {}, with request param: {}",
+    @GetMapping
+    public List<ClientResponse> getClients(@RequestParam(defaultValue = "20") Integer count) {
+        log.info("START endpoint client (Get), request sent by principal: {}, with request param: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), count);
 
-        List<Client> clients = clientService.getClients(count);
+        List<ClientResponse> clients = clientService.getClients(count);
 
-        log.info("END endpoint client/get, success response containing {} clients.", clients.size());
+        log.info("END endpoint client (Get), success response containing {} clients.", clients.size());
         return clients;
     }
 }

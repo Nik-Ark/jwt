@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.domen.response.exception;
+package com.nikki.jwt.app.response.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
-package com.nikki.jwt.security.domen.response.exception;
+package com.nikki.jwt.app.response.exception;
 
-import com.nikki.jwt.security.domen.response.error.ErrorResponse;
+import com.nikki.jwt.app.response.error.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
