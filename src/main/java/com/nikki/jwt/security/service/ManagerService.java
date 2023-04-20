@@ -33,6 +33,9 @@ public class ManagerService {
 
     public List<ManagerResponse> getManagers(Integer count) {
         long total = managerRepository.count();
+        if (total == 0) {
+            return new ArrayList<>();
+        }
         int finalCount = count > total ? (int) total : count;
         finalCount = Math.min(finalCount, 20);
         Page<Manager> managerPage = managerRepository.findAll(Pageable.ofSize(finalCount));

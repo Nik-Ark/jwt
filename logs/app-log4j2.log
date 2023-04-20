@@ -1,0 +1,30 @@
+2023-Apr-20 18:21:48 PM [main] INFO  com.nikki.jwt.JwtApplication - Starting JwtApplication using Java 17.0.4 with PID 8824 (/home/nikki/Workspaces/idea-projects/jwt/target/classes started by nikki in /home/nikki/Workspaces/idea-projects/jwt)
+2023-Apr-20 18:21:48 PM [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.0.Final
+2023-Apr-20 18:21:48 PM [main] INFO  com.nikki.jwt.JwtApplication - The following 1 profile is active: "dev"
+2023-Apr-20 18:21:49 PM [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-Apr-20 18:21:49 PM [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 47 ms. Found 7 JPA repository interfaces.
+2023-Apr-20 18:21:49 PM [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2023-Apr-20 18:21:49 PM [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2023-Apr-20 18:21:49 PM [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2023-Apr-20 18:21:49 PM [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.5]
+2023-Apr-20 18:21:49 PM [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-Apr-20 18:21:49 PM [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1059 ms
+2023-Apr-20 18:21:49 PM [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2023-Apr-20 18:21:49 PM [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@30abf79c
+2023-Apr-20 18:21:49 PM [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2023-Apr-20 18:21:50 PM [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-Apr-20 18:21:50 PM [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.1.7.Final
+2023-Apr-20 18:21:50 PM [main] INFO  SQL dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQLDialect
+2023-Apr-20 18:21:50 PM [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-Apr-20 18:21:50 PM [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-Apr-20 18:21:51 PM [main] INFO  org.springframework.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@be56353, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5c815478, org.springframework.security.web.context.SecurityContextHolderFilter@7a14d8a4, org.springframework.security.web.header.HeaderWriterFilter@3884e858, org.springframework.web.filter.CorsFilter@1efa258e, org.springframework.security.web.authentication.logout.LogoutFilter@560e1459, com.nikki.jwt.security.filter.JwtAuthenticationFilter@4d25943d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7a8d6eb3, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@50c99398, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6ccd3cf1, org.springframework.security.web.session.SessionManagementFilter@1df8ea34, org.springframework.security.web.access.ExceptionTranslationFilter@31e3b882, org.springframework.security.web.access.intercept.AuthorizationFilter@3b9d85c2]
+2023-Apr-20 18:21:52 PM [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2023-Apr-20 18:21:52 PM [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2023-Apr-20 18:21:52 PM [main] INFO  com.nikki.jwt.JwtApplication - Started JwtApplication in 3.772 seconds (process running for 4.579)
+2023-Apr-20 18:21:56 PM [http-nio-8080-exec-1] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-Apr-20 18:21:56 PM [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-Apr-20 18:21:56 PM [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2023-Apr-20 18:22:03 PM [http-nio-8080-exec-3] ERROR com.nikki.jwt.app.response.exception.AppExceptionsHandler - MissingServletRequestParameterException: org.springframework.web.bind.MissingServletRequestParameterException: Required request parameter 'email' for method parameter type String is not present
+2023-Apr-20 18:22:18 PM [SpringApplicationShutdownHook] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-Apr-20 18:22:18 PM [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2023-Apr-20 18:22:18 PM [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

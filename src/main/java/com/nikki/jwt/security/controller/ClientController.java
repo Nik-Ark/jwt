@@ -1,17 +1,15 @@
 package com.nikki.jwt.security.controller;
 
 import com.nikki.jwt.security.dto.client.ClientResponse;
-import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.service.ClientService;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +30,16 @@ public class ClientController {
 
         log.info("END endpoint client (Get), success response containing {} clients.", clients.size());
         return new ResponseEntity<>(clients, HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ClientResponse> removeClient(@RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint removeClient, request sent by principal: {}, with request email param: {}",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
+
+        ClientResponse clientResponse = clientService.removeClient(email);
+
+        log.info("END endpoint removeClient, removed client: {}.", clientResponse);
+        return new ResponseEntity<>(clientResponse, HttpStatus.OK);
     }
 }

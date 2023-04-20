@@ -27,7 +27,7 @@ public class ValidationUtil {
                 String violations = result.stream()
                         .map(ConstraintViolation::getMessage)
                         .reduce((acc, curr) -> acc + ". " + curr).orElse("");
-                log.error("invalid json in request registration, validation errors: {}", violations);
+                log.error("invalid json in request, validation errors: {}", violations);
                 throw HandledException.builder()
                         .message(violations)
                         .httpStatus(HttpStatus.BAD_REQUEST)

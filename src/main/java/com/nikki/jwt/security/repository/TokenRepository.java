@@ -17,6 +17,8 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
     """)
     List<Token> findAllValidTokensBySecurityUserId(Long securityUserId);
 
+    List<Token> findAllBySecurityUserId(Long id);
+
     @Modifying
     @Query("delete from Token t where t.expiryDate <= ?1")
     void deleteAllExpiredSince(Date now);
