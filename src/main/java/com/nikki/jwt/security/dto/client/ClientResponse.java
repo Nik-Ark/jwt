@@ -18,4 +18,15 @@ public class ClientResponse {
     private String phoneNumber;
 
     private String city;
+
+    @Override
+    public String toString() {
+        return "ClientResponse: {" +
+                " email: '" + email + '\'' +
+                ", firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
+                ", phoneNumber: '" + phoneNumber + '\'' +
+                ", city: '" + city + '\'' +
+                " " + '}';
+    }
 }

@@ -16,4 +16,14 @@ public class ManagerResponse {
     private String lastName;
 
     private String phoneNumber;
+
+    @Override
+    public String toString() {
+        return "ManagerResponse: {" +
+                " email: '" + email + '\'' +
+                ", firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
+                ", phoneNumber: '" + phoneNumber + '\'' +
+                " " + '}';
+    }
 }

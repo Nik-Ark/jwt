@@ -53,9 +53,16 @@ public class AuthenticationService {
                     .build();
         }
 
-        Optional<Role> retrievedRole = roleRepository.findByName("CLIENT");
+        Role retrievedRole = roleRepository.findByName("CLIENT").orElseThrow(
+                () -> {
+                    throw HandledException.builder()
+                            .message("Can't find ROLE CLIENT in Roles DB")
+                            .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build();
+                }
+        );
         Set<Role> roles = new HashSet<>();
-        retrievedRole.ifPresent(roles::add);
+        roles.add(retrievedRole);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         /*                                                                                       */
