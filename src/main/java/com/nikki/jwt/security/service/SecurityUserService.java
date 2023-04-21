@@ -27,7 +27,7 @@ public class SecurityUserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    public SecurityUser createSecurityUser(CreateSecurityUserRequest request, String roleName) {
+    public SecurityUser saveSecurityUser(CreateSecurityUserRequest request, String roleName) {
         Role role = roleRepository.findByName(roleName).orElseThrow(
                 () -> {
                     throw HandledException.builder()

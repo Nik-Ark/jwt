@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.domen.constant;
+package com.nikki.jwt.security.api.regexp;
 
 public class RegExp {
     public final static String name = "^[A-zА-яЁё]{1,44}$";

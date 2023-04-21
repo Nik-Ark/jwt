@@ -37,9 +37,9 @@ public class ClientController {
         log.info("START endpoint removeClient, request sent by principal: {}, with request email param: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
-        ClientResponse clientResponse = clientService.removeClient(email);
+        ClientResponse response = clientService.removeClient(email);
 
-        log.info("END endpoint removeClient, removed client: {}.", clientResponse);
-        return new ResponseEntity<>(clientResponse, HttpStatus.OK);
+        log.info("END endpoint removeClient, removed client: {}.", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

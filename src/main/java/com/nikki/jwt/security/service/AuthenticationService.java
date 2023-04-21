@@ -1,11 +1,11 @@
 package com.nikki.jwt.security.service;
 
+import com.nikki.jwt.security.api.role.ROLE;
 import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.dto.token.TokenPair;
 import com.nikki.jwt.security.dto.login.LoginRequest;
 import com.nikki.jwt.app.response.exception.HandledException;
-import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.Role;
 import com.nikki.jwt.security.entity.SecurityUser;
@@ -42,8 +42,8 @@ public class AuthenticationService {
                     .build();
         }
 
-        SecurityUser securityUser = securityUserService.createSecurityUser(request, "CLIENT");
-        Client client = clientService.createClient(request);
+        SecurityUser securityUser = securityUserService.saveSecurityUser(request, ROLE.CLIENT.name());
+        clientService.saveClient(request);
 
         TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);

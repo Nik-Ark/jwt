@@ -1,6 +1,6 @@
 package com.nikki.jwt.security.dto.manager;
 
-import com.nikki.jwt.security.domen.constant.RegExp;
+import com.nikki.jwt.security.api.regexp.RegExp;
 import com.nikki.jwt.security.dto.security_user.CreateSecurityUserRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

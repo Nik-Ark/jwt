@@ -3,6 +3,8 @@ package com.nikki.jwt.security.controller;
 import com.nikki.jwt.security.dto.manager.CreateManagerRequest;
 import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.service.ManagerService;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,5 +42,16 @@ public class ManagerController {
 
         log.info("END endpoint manager (Post), created: {}.", managerResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ManagerResponse> removeManager(@RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint removeManager, request sent by principal: {}, with request email param: {}",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
+
+        ManagerResponse response = managerService.removeManager(email);
+
+        log.info("END endpoint removeManager, removed manager: {}.", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.nikki.jwt.security.service;
 
+import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.entity.*;
@@ -7,6 +8,7 @@ import com.nikki.jwt.security.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +36,7 @@ public class ClientService {
                 .map(this::mapToClientResponse).collect(Collectors.toList());
     }
 
-    public Client createClient(CreateClientRequest request) {
+    public Client saveClient(CreateClientRequest request) {
         Client client = Client.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
@@ -46,18 +48,18 @@ public class ClientService {
     }
 
     public ClientResponse removeClient(String email) {
-        Client client = findClientByEmail(email);
-
+        Client client;
+        try {
+            client = findClientByEmail(email);
+        } catch (UsernameNotFoundException ex) {
+            throw HandledException.builder()
+                    .message("Client doesn't exist")
+                    .httpStatus(HttpStatus.NO_CONTENT)
+                    .build();
+        }
         clientRepository.delete(client);
         securityUserService.deleteSecurityUserByEmail(email);
-
-        return ClientResponse.builder()
-                .firstName(client.getFirstName())
-                .lastName(client.getLastName())
-                .email(client.getEmail())
-                .phoneNumber(client.getPhoneNumber())
-                .city(client.getCity())
-                .build();
+        return mapToClientResponse(client);
     }
 
     public Client findClientByEmail(String email) {

@@ -1,6 +1,6 @@
 package com.nikki.jwt.security.dto.login;
 
-import com.nikki.jwt.security.domen.constant.RegExp;
+import com.nikki.jwt.security.api.regexp.RegExp;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
