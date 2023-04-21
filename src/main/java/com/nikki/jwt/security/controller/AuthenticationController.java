@@ -7,6 +7,7 @@ import com.nikki.jwt.security.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +42,10 @@ public class AuthenticationController {
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        ResponseEntity<SecurityUserResponse> response = authenticationService.register(request);
+        SecurityUserResponse response = authenticationService.register(request);
 
         log.info("END endpoint register, response: {}", response);
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -53,10 +54,10 @@ public class AuthenticationController {
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        ResponseEntity<SecurityUserResponse> response = authenticationService.login(request);
+        SecurityUserResponse response = authenticationService.login(request);
 
         log.info("END endpoint login, response: {}", response);
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/refresh")
@@ -65,9 +66,9 @@ public class AuthenticationController {
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        ResponseEntity<SecurityUserResponse> response = authenticationService.refreshToken(request);
+        SecurityUserResponse response = authenticationService.refreshToken(request);
 
         log.info("END endpoint refresh, response: {}", response);
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

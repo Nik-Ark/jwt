@@ -54,7 +54,7 @@ public class ClientService {
         } catch (UsernameNotFoundException ex) {
             throw HandledException.builder()
                     .message("Client doesn't exist")
-                    .httpStatus(HttpStatus.NO_CONTENT)
+                    .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
         clientRepository.delete(client);

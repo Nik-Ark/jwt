@@ -14,7 +14,6 @@ import com.nikki.jwt.security.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +30,7 @@ public class AuthenticationService {
     private final JwtUtil jwtUtil;
     private final ValidationUtil validationUtil;
 
-    public ResponseEntity<SecurityUserResponse> register(CreateClientRequest request) {
+    public SecurityUserResponse register(CreateClientRequest request) {
 
         validationUtil.validationRequest(request);
 
@@ -48,11 +47,10 @@ public class AuthenticationService {
         TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        SecurityUserResponse response = mapToSecurityUserResponse(securityUser, tokenPair);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
-    public ResponseEntity<SecurityUserResponse> login(LoginRequest request) {
+    public SecurityUserResponse login(LoginRequest request) {
         /*
         DEFAULT USERS MUST USE SECURE PASSWORDS AND CORRECT EMAILS
         validationUtil.validationRequest(request);
@@ -69,11 +67,10 @@ public class AuthenticationService {
         TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        SecurityUserResponse response = mapToSecurityUserResponse(securityUser, tokenPair);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
-    public ResponseEntity<SecurityUserResponse> refreshToken(HttpServletRequest request) {
+    public SecurityUserResponse refreshToken(HttpServletRequest request) {
 
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
@@ -99,8 +96,7 @@ public class AuthenticationService {
         TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
 
-        SecurityUserResponse response = mapToSecurityUserResponse(securityUser, tokenPair);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
     private SecurityUserResponse mapToSecurityUserResponse(SecurityUser securityUser, TokenPair tokenPair) {
