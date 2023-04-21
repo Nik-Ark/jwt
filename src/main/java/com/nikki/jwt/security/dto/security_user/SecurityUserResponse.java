@@ -1,13 +1,15 @@
-package com.nikki.jwt.security.dto.register;
+package com.nikki.jwt.security.dto.security_user;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.Arrays;
 
 @Getter
+@Setter
 @Builder
-public class RegisterResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class SecurityUserResponse {
 
     private String firstName;
     private String lastName;
@@ -18,7 +20,7 @@ public class RegisterResponse {
 
     @Override
     public String toString() {
-        return "RegisterResponse: {" +
+        return "SecurityUserResponse: {" +
                 " firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 ", email: '" + email + '\'' +

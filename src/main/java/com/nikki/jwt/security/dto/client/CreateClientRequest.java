@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.dto.manager;
+package com.nikki.jwt.security.dto.client;
 
 import com.nikki.jwt.security.domen.constant.RegExp;
 import com.nikki.jwt.security.dto.security_user.CreateSecurityUserRequest;
@@ -14,17 +14,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateManagerRequest extends CreateSecurityUserRequest {
+public class CreateClientRequest extends CreateSecurityUserRequest {
 
     @NotNull
     @NotBlank(message = "email is required")
     @Pattern(regexp = RegExp.email, message = "invalid email format")
     private String email;
-
-    @NotNull
-    @NotBlank(message = "password is required")
-    @Pattern(regexp = RegExp.password, message = "invalid password format")
-    private String password;
 
     @NotNull
     @NotBlank(message = "firstName is required")
@@ -38,13 +33,16 @@ public class CreateManagerRequest extends CreateSecurityUserRequest {
 
     private String phoneNumber;
 
+    private String city;
+
     @Override
     public String toString() {
-        return "CreateManagerRequest: {" +
-                " email: '" + email + '\'' +
+        return "CreateClientRequest: {" +
+                "email: '" + email + '\'' +
                 ", firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 ", phoneNumber: '" + phoneNumber + '\'' +
+                ", city: '" + city + '\'' +
                 " " + '}';
     }
 }

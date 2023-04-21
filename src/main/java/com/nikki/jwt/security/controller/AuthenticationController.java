@@ -1,10 +1,8 @@
 package com.nikki.jwt.security.controller;
 
-import com.nikki.jwt.security.dto.refresh.RefreshResponse;
+import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.dto.login.LoginRequest;
-import com.nikki.jwt.security.dto.login.LoginResponse;
-import com.nikki.jwt.security.dto.register.RegisterRequest;
-import com.nikki.jwt.security.dto.register.RegisterResponse;
+import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,36 +36,36 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<SecurityUserResponse> register(@RequestBody CreateClientRequest request) {
         log.info("START endpoint register, request: {}", request);
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        ResponseEntity<RegisterResponse> response = authenticationService.register(request);
+        ResponseEntity<SecurityUserResponse> response = authenticationService.register(request);
 
         log.info("END endpoint register, response: {}", response);
         return response;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<SecurityUserResponse> login(@RequestBody LoginRequest request) {
         log.info("START endpoint login, request: {}", request);
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        ResponseEntity<LoginResponse> response = authenticationService.login(request);
+        ResponseEntity<SecurityUserResponse> response = authenticationService.login(request);
 
         log.info("END endpoint login, response: {}", response);
         return response;
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<SecurityUserResponse> refreshToken(HttpServletRequest request) {
         log.info("START endpoint refresh, request: {}", request);
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        ResponseEntity<RefreshResponse> response = authenticationService.refreshToken(request);
+        ResponseEntity<SecurityUserResponse> response = authenticationService.refreshToken(request);
 
         log.info("END endpoint refresh, response: {}", response);
         return response;

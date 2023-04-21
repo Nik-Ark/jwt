@@ -1,6 +1,7 @@
 package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.security.dto.client.ClientResponse;
+import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.entity.*;
 import com.nikki.jwt.security.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,18 @@ public class ClientService {
                 .map(this::mapToClientResponse).collect(Collectors.toList());
     }
 
-    public ClientResponse removeClient(String email) {
+    public Client createClient(CreateClientRequest request) {
+        Client client = Client.builder()
+                .email(request.getEmail())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .phoneNumber(request.getPhoneNumber())
+                .city(request.getCity())
+                .build();
+        return clientRepository.save(client);
+    }
 
+    public ClientResponse removeClient(String email) {
         Client client = findClientByEmail(email);
 
         clientRepository.delete(client);

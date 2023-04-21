@@ -1,12 +1,12 @@
 package com.nikki.jwt.security.dto.manager;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-@AllArgsConstructor
-@Builder
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ManagerResponse {
 
     private String email;
