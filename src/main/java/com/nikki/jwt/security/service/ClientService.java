@@ -47,7 +47,7 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-    public ClientResponse removeClient(String email) {
+    public ClientResponse removeClientByEmail(String email) {
         Client client;
         try {
             client = findClientByEmail(email);

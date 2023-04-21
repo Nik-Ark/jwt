@@ -45,13 +45,13 @@ public class ManagerController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ManagerResponse> removeManager(@RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint removeManager, request sent by principal: {}, with request email param: {}",
+    public ResponseEntity<ManagerResponse> removeManagerByEmail(@RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint manager (Delete), request sent by principal: {}, with request email param: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
-        ManagerResponse response = managerService.removeManager(email);
+        ManagerResponse response = managerService.removeManagerByEmail(email);
 
-        log.info("END endpoint removeManager, removed manager: {}.", response);
+        log.info("END endpoint manager (Delete), removed manager: {}.", response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

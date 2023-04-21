@@ -61,7 +61,7 @@ public class ManagerService {
         return managerRepository.save(manager);
     }
 
-    public ManagerResponse removeManager(String email) {
+    public ManagerResponse removeManagerByEmail(String email) {
         Manager manager;
         try {
             manager = findManagerByEmail(email);

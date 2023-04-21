@@ -101,6 +101,7 @@ CREATE TABLE admins
     email           VARCHAR(45)     NOT NULL,
     first_name      VARCHAR(45)     NOT NULL,
     last_name       VARCHAR(45)     NOT NULL,
+    phone_number    VARCHAR(45)             ,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY     (email)
 ) COLLATE utf8_bin;

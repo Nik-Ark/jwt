@@ -33,13 +33,13 @@ public class ClientController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ClientResponse> removeClient(@RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint removeClient, request sent by principal: {}, with request email param: {}",
+    public ResponseEntity<ClientResponse> removeClientByEmail(@RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint client (Delete), request sent by principal: {}, with request email param: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
-        ClientResponse response = clientService.removeClient(email);
+        ClientResponse response = clientService.removeClientByEmail(email);
 
-        log.info("END endpoint removeClient, removed client: {}.", response);
+        log.info("END endpoint client (Delete), removed client: {}.", response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
