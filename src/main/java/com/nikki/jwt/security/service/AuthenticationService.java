@@ -106,10 +106,10 @@ public class AuthenticationService {
     }
 
     public ResponseEntity<LoginResponse> login(LoginRequest request) {
-
-//        DEFAULT USERS MUST USE SECURE PASSWORDS AND CORRECT EMAILS
-//        validationUtil.validationRequest(request);
-
+        /*
+        DEFAULT USERS MUST USE SECURE PASSWORDS AND CORRECT EMAILS
+        validationUtil.validationRequest(request);
+        */
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     request.getEmail(),
@@ -117,15 +117,9 @@ public class AuthenticationService {
             )
         );
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        /*                                                                                       */
-        /*       ОБРАБАТЫВАТЬ ЭТОТ EXCEPTION ЧТОБЫ СЕРВЕР ВОЗВРАЩАЛ ОШИБКУ USER_NOT_FOUND        */
-        /*                                                                                       */
-        ///////////////////////////////////////////////////////////////////////////////////////////
         SecurityUser securityUser = securityUserRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new UsernameNotFoundException("User with email: " + request.getEmail() + " not found")
         );
-        ///////////////////////////////////////////////////////////////////////////////////////////
 
         TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
         tokenPairService.saveTokenPair(securityUser, tokenPair);
@@ -142,7 +136,6 @@ public class AuthenticationService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /*    THIS METHOD WILL BE VOID WHEN REFRESHTOKEN RETURNS IN COOKIE      */
     public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request) {
 
         final String authHeader = request.getHeader("Authorization");
