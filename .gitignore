@@ -39,4 +39,4 @@ src/main/resources/db_management/password/pass
 src/main/resources/application-production.properties
 
 ### Logs ###
-./logs
+logs
