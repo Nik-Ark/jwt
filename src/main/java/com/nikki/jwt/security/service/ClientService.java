@@ -18,9 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class ClientService {
 
-    private final SecurityUserRepository securityUserRepository;
-    private final TokenRepository tokenRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final SecurityUserService securityUserService;
     private final ClientRepository clientRepository;
 
     public List<ClientResponse> getClients(Integer count) {
@@ -31,29 +29,16 @@ public class ClientService {
         int finalCount = count > total ? (int) total : count;
         finalCount = Math.min(finalCount, 20);
         Page<Client> clientPage = clientRepository.findAll(Pageable.ofSize(finalCount));
-        List<ClientResponse> clientResponseList = clientPage.getContent().stream()
+        return clientPage.getContent().stream()
                 .map(this::mapToClientResponse).collect(Collectors.toList());
-        return clientResponseList;
     }
 
     public ClientResponse removeClient(String email) {
 
-        Client client = clientRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("Client with email: " + email + " not found")
-        );
-
-        SecurityUser securityUser = securityUserRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User with email: " + email + " not found")
-        );
+        Client client = findClientByEmail(email);
 
         clientRepository.delete(client);
-
-        List<Token> tokens = tokenRepository.findAllBySecurityUserId(securityUser.getId());
-        List<RefreshToken> refreshTokens = refreshTokenRepository.findAllBySecurityUserId(securityUser.getId());
-        tokenRepository.deleteAll(tokens);
-        refreshTokenRepository.deleteAll(refreshTokens);
-
-        securityUserRepository.delete(securityUser);
+        securityUserService.deleteSecurityUserByEmail(email);
 
         return ClientResponse.builder()
                 .firstName(client.getFirstName())
@@ -62,6 +47,12 @@ public class ClientService {
                 .phoneNumber(client.getPhoneNumber())
                 .city(client.getCity())
                 .build();
+    }
+
+    public Client findClientByEmail(String email) {
+        return clientRepository.findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("Client with email: " + email + " not found")
+        );
     }
 
     private ClientResponse mapToClientResponse(Client client) {

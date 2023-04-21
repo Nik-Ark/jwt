@@ -40,6 +40,13 @@ public class TokenPairService {
         return refreshTokenRepository.findByToken(token);
     }
 
+    public void deleteAllTokensAndRefreshTokensBySecurityUserEmail(String email) {
+        List<Token> tokens = tokenRepository.findAllTokensBySecurityUserEmail(email);
+        List<RefreshToken> refreshTokens = refreshTokenRepository.findAllRefreshTokensBySecurityUserEmail(email);
+        tokenRepository.deleteAll(tokens);
+        refreshTokenRepository.deleteAll(refreshTokens);
+    }
+
     public void revokeAllUserTokens(Long id) {
         List<Token> validTokens = tokenRepository.findAllValidTokensBySecurityUserId(id);
         List<RefreshToken> validRefreshTokens = refreshTokenRepository.findAllValidRefreshTokensBySecurityUserId(id);

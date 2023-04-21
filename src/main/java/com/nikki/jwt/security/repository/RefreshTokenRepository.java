@@ -18,7 +18,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     """)
     List<RefreshToken> findAllValidRefreshTokensBySecurityUserId(Long securityUserId);
 
-    List<RefreshToken> findAllBySecurityUserId(Long id);
+    List<RefreshToken> findAllRefreshTokensBySecurityUserEmail(String email);
 
     @Modifying
     @Query("delete from RefreshToken t where t.expiryDate <= ?1")
