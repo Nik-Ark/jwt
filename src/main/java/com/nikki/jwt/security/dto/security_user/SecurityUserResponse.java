@@ -10,9 +10,6 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SecurityUserResponse {
-
-    private String firstName;
-    private String lastName;
     private String email;
     private String[] roles;
     private String accessToken;
@@ -21,8 +18,6 @@ public class SecurityUserResponse {
     @Override
     public String toString() {
         return "SecurityUserResponse: {" +
-                " firstName: '" + firstName + '\'' +
-                ", lastName: '" + lastName + '\'' +
                 ", email: '" + email + '\'' +
                 ", roles: " + Arrays.toString(roles) +
                 " " + '}';

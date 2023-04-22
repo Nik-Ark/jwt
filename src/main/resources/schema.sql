@@ -3,8 +3,6 @@ CREATE TABLE IF NOT EXISTS security_users
     id              BIGINT NOT NULL AUTO_INCREMENT,
     email           VARCHAR(45)     NOT NULL UNIQUE,
     password        VARCHAR(100)    NOT NULL,
-    first_name      VARCHAR(45)     NOT NULL,
-    last_name       VARCHAR(45)     NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;

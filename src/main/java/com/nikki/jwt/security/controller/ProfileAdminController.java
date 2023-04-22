@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +29,10 @@ public class ProfileAdminController {
 
         log.info("END endpoint profile/admin (Get), response: {}.", adminResponse);
         return new ResponseEntity<>(adminResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/info")
+    public ResponseEntity<AdminResponse> changeAdminInfo() {
+        return null;
     }
 }

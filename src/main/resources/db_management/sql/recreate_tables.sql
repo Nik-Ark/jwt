@@ -14,16 +14,14 @@ CREATE TABLE security_users
     id              BIGINT NOT NULL AUTO_INCREMENT,
     email           VARCHAR(45)     NOT NULL UNIQUE,
     password        VARCHAR(100)    NOT NULL,
-    first_name      VARCHAR(45)     NOT NULL,
-    last_name       VARCHAR(45)     NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;
 
-INSERT INTO security_users (id, email, password, first_name, last_name)
-VALUES (1, 'user1', '$2a$12$f66aaKBc6f23La7JaN5ca.obWwmx8ENNHG.pDNdgHTAkgxVEIOqgW', 'name1', 'surname1'),
-       (2, 'user2', '$2a$12$eV8SV478lxghvjeLDNbH.eUyd4AW.81SFTKjcViyJAOO0qkaJbiG2', 'name2', 'surname2'),
-       (3, 'user3', '$2y$10$/DGK1xfFrrnHaKswprgJVedHSHI9w3n.qrt3NF1rmuX7P9KhI7vZO', 'name3', 'surname3');
+INSERT INTO security_users (id, email, password)
+VALUES (1, 'user1', '$2a$12$f66aaKBc6f23La7JaN5ca.obWwmx8ENNHG.pDNdgHTAkgxVEIOqgW'),
+       (2, 'user2', '$2a$12$eV8SV478lxghvjeLDNbH.eUyd4AW.81SFTKjcViyJAOO0qkaJbiG2'),
+       (3, 'user3', '$2y$10$/DGK1xfFrrnHaKswprgJVedHSHI9w3n.qrt3NF1rmuX7P9KhI7vZO');
 
 CREATE TABLE roles
 (

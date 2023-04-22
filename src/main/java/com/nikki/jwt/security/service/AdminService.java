@@ -80,6 +80,10 @@ public class AdminService {
         return mapToAdminResponse(admin);
     }
 
+    public boolean validateIssuer(String password) {
+        return true;
+    }
+
     /*                                  REDUNDANT METHOD    !!!                                             */
     /*      FOR CORNER CASE SITUATIONS LIKE INITIALIZING SERVER (DATA LOADER)      */
     /*      TRY TO REPLACE IT WITH getAdminProfileByEmail (check with existsByEmail before calling)         */

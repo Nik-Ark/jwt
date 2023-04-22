@@ -31,12 +31,6 @@ public class SecurityUser implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "security_users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -87,8 +81,6 @@ public class SecurityUser implements UserDetails {
         return "SecurityUser: {" +
                 " id: " + id +
                 ", email: '" + email + '\'' +
-                ", firstName: '" + firstName + '\'' +
-                ", lastName: '" + lastName + '\'' +
                 ", roles: " + roles +
                 " " + '}';
     }

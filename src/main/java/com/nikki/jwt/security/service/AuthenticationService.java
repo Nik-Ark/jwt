@@ -101,8 +101,6 @@ public class AuthenticationService {
 
     private SecurityUserResponse mapToSecurityUserResponse(SecurityUser securityUser, TokenPair tokenPair) {
         return SecurityUserResponse.builder()
-                .firstName(securityUser.getFirstName())
-                .lastName(securityUser.getLastName())
                 .email(securityUser.getEmail())
                 .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
                 .accessToken(tokenPair.getAccessToken())

@@ -40,8 +40,6 @@ public class SecurityUserService {
         roles.add(role);
 
         SecurityUser securityUser = SecurityUser.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
