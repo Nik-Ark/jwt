@@ -16,6 +16,7 @@ public class CreateAdminRequest extends CreateSecurityUserRequest {
 
     @NotNull
     @NotBlank(message = "email is required")
+    @Pattern(regexp = RegExp.email, message = "invalid email format")
     private String email;
 
     @NotNull

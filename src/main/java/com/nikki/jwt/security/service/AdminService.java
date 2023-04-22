@@ -3,6 +3,7 @@ package com.nikki.jwt.security.service;
 import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.api.role.ROLE;
 import com.nikki.jwt.security.dto.admin.AdminResponse;
+import com.nikki.jwt.security.dto.admin.ChangeAdminInfoRequest;
 import com.nikki.jwt.security.dto.admin.CreateAdminRequest;
 import com.nikki.jwt.security.entity.Admin;
 import com.nikki.jwt.security.repository.AdminRepository;
@@ -80,17 +81,19 @@ public class AdminService {
         return mapToAdminResponse(admin);
     }
 
-    public boolean validateIssuer(String password) {
-        return true;
+    public AdminResponse changeAdminInfoSelf(ChangeAdminInfoRequest request) {
+        validationUtil.validationRequest(request);
+        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        return changeAdminInfoByEmail(SecurityContextHolder.getContext().getAuthentication().getName(), request);
     }
 
-    /*                                  REDUNDANT METHOD    !!!                                             */
-    /*      FOR CORNER CASE SITUATIONS LIKE INITIALIZING SERVER (DATA LOADER)      */
-    /*      TRY TO REPLACE IT WITH getAdminProfileByEmail (check with existsByEmail before calling)         */
-    public Optional<AdminResponse> exposeAdmin(String email) {
-        Optional<Admin> admin = adminRepository.findByEmail(email);
-        if (admin.isEmpty()) return Optional.empty();
-        return Optional.of(mapToAdminResponse(admin.get()));
+    private AdminResponse changeAdminInfoByEmail(String email, ChangeAdminInfoRequest request) {
+        Admin admin = findAdminByEmail(email);
+        admin.setFirstName(request.getFirstName());
+        admin.setLastName(request.getLastName());
+        admin.setPhoneNumber(request.getPhoneNumber());
+        adminRepository.save(admin);
+        return mapToAdminResponse(admin);
     }
 
     private AdminResponse mapToAdminResponse(Admin admin) {

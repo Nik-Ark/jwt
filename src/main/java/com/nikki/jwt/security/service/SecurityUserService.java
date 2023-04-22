@@ -8,6 +8,7 @@ import com.nikki.jwt.security.repository.RoleRepository;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,5 +62,16 @@ public class SecurityUserService {
         return securityUserRepository.findByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("User with email: " + email + " not found")
         );
+    }
+
+    public void validateIssuerPassword(String issuerPassword) {
+        SecurityUser securityUser =
+                findSecurityUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (passwordEncoder.matches(securityUser.getPassword(), issuerPassword)) {
+            throw HandledException.builder()
+                    .message("Issuer is not valid")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
     }
 }

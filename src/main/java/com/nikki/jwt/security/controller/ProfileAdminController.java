@@ -1,16 +1,14 @@
 package com.nikki.jwt.security.controller;
 
 import com.nikki.jwt.security.dto.admin.AdminResponse;
+import com.nikki.jwt.security.dto.admin.ChangeAdminInfoRequest;
 import com.nikki.jwt.security.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +30,13 @@ public class ProfileAdminController {
     }
 
     @PutMapping("/info")
-    public ResponseEntity<AdminResponse> changeAdminInfo() {
-        return null;
+    public ResponseEntity<AdminResponse> changeAdminInfo(@RequestBody ChangeAdminInfoRequest request) {
+        log.info("START endpoint profile/admin/info (Put), principal: {}, request: {}.",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request);
+
+        AdminResponse adminResponse = adminService.changeAdminInfoSelf(request);
+
+        log.info("END endpoint profile/admin/info (Put), response: {}.", adminResponse);
+        return new ResponseEntity<>(adminResponse, HttpStatus.OK);
     }
 }

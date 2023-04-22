@@ -29,7 +29,7 @@ public class ValidationUtil {
                         .reduce((acc, curr) -> acc + ". " + curr).orElse("");
                 log.error("invalid json in request, validation errors: {}", violations);
                 throw HandledException.builder()
-                        .message(violations)
+                        .message("Invalid request")
                         .httpStatus(HttpStatus.BAD_REQUEST)
                         .build();
             }

@@ -51,10 +51,7 @@ public class AuthenticationService {
     }
 
     public SecurityUserResponse login(LoginRequest request) {
-        /*
-        DEFAULT USERS MUST USE SECURE PASSWORDS AND CORRECT EMAILS
-        validationUtil.validationRequest(request);
-        */
+
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     request.getEmail(),

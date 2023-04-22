@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -51,13 +50,8 @@ public class DataLoader implements CommandLineRunner {
             AdminResponse createdAdmin = adminService.createAdmin(adminRequest);
             log.info("Admin was created: {}.", createdAdmin);
         } else {
-            Optional<AdminResponse> fetchedAdmin = adminService.exposeAdmin(adminRequest.getEmail());
-            if (fetchedAdmin.isPresent()) {
-                log.info("Admin already exists and won't be created: {}.", fetchedAdmin.get());
-            } else {
-                log.error("Something went wrong, Admin with email: {} doesn't exist and wasn't created.",
-                        adminRequest.getEmail());
-            }
+            AdminResponse fetchedAdmin = adminService.getAdminProfileByEmail(adminRequest.getEmail());
+            log.info("Admin already exists and won't be created: {}.", fetchedAdmin);
         }
 
         log.info("END DataLoader running in Dev Profile! 🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐");
