@@ -42,10 +42,10 @@ public class AuthenticationController {
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        SecurityUserResponse response = authenticationService.register(request);
+        SecurityUserResponse securityUserResponse = authenticationService.register(request);
 
-        log.info("END endpoint register, response: {}", response);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        log.info("END endpoint register, response: {}", securityUserResponse);
+        return new ResponseEntity<>(securityUserResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -54,10 +54,10 @@ public class AuthenticationController {
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        SecurityUserResponse response = authenticationService.login(request);
+        SecurityUserResponse securityUserResponse = authenticationService.login(request);
 
-        log.info("END endpoint login, response: {}", response);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        log.info("END endpoint login, response: {}", securityUserResponse);
+        return new ResponseEntity<>(securityUserResponse, HttpStatus.OK);
     }
 
     @GetMapping("/refresh")
@@ -66,9 +66,9 @@ public class AuthenticationController {
         log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
                 SecurityContextHolder.getContext().getAuthentication());
 
-        SecurityUserResponse response = authenticationService.refreshToken(request);
+        SecurityUserResponse securityUserResponse = authenticationService.refreshToken(request);
 
-        log.info("END endpoint refresh, response: {}", response);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        log.info("END endpoint refresh, response: {}", securityUserResponse);
+        return new ResponseEntity<>(securityUserResponse, HttpStatus.OK);
     }
 }

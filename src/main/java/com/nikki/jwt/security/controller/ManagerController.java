@@ -49,9 +49,9 @@ public class ManagerController {
         log.info("START endpoint manager (Delete), request sent by principal: {}, with request email param: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
-        ManagerResponse response = managerService.removeManagerByEmail(email);
+        ManagerResponse managerResponse = managerService.removeManagerByEmail(email);
 
-        log.info("END endpoint manager (Delete), removed manager: {}.", response);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        log.info("END endpoint manager (Delete), removed manager: {}.", managerResponse);
+        return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 }

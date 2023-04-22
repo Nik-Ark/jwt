@@ -9,6 +9,7 @@ import com.nikki.jwt.security.repository.AdminRepository;
 import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +71,18 @@ public class AdminService {
         );
     }
 
+    public AdminResponse getAdminProfile() {
+        return getAdminProfileByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public AdminResponse getAdminProfileByEmail(String email) {
+        Admin admin = findAdminByEmail(email);
+        return mapToAdminResponse(admin);
+    }
+
+    /*                                  REDUNDANT METHOD    !!!                                             */
+    /*      FOR CORNER CASE SITUATIONS LIKE INITIALIZING SERVER (DATA LOADER)      */
+    /*      TRY TO REPLACE IT WITH getAdminProfileByEmail (check with existsByEmail before calling)         */
     public Optional<AdminResponse> exposeAdmin(String email) {
         Optional<Admin> admin = adminRepository.findByEmail(email);
         if (admin.isEmpty()) return Optional.empty();
