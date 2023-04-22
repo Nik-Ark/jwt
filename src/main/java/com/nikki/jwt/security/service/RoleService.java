@@ -36,7 +36,7 @@ public class RoleService {
             log.info("Role: {} has been created.", roleResponse);
             return true;
         }
-        log.info("Role: {} already exists and thus won't be created.", roleResponse);
+        log.info("Role: {} already exists and won't be created.", roleResponse);
         return false;
     }
 

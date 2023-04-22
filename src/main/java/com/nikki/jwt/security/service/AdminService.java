@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class AdminService {
@@ -66,6 +68,12 @@ public class AdminService {
         return adminRepository.findByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("Admin with email: " + email + " not found")
         );
+    }
+
+    public Optional<AdminResponse> exposeAdmin(String email) {
+        Optional<Admin> admin = adminRepository.findByEmail(email);
+        if (admin.isEmpty()) return Optional.empty();
+        return Optional.of(mapToAdminResponse(admin.get()));
     }
 
     private AdminResponse mapToAdminResponse(Admin admin) {
