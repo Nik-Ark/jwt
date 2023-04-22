@@ -1,6 +1,3 @@
 #!/bin/bash
-./drop_user_and_db.sh
-
-./create_user_and_db.sh
-
+./recreate_db_and_user
 ./recreate_tables.sh

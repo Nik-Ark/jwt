@@ -24,7 +24,7 @@ public class DataLoader implements CommandLineRunner {
     private final AdminService adminService;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         log.info("***********************************************************");
         log.info("START DataLoader running in Dev Profile! 🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐");
@@ -39,7 +39,7 @@ public class DataLoader implements CommandLineRunner {
                 .phoneNumber("+998974559812")
                 .build();
 
-        /*
+        /*  DELETE ADMIN IF EXISTS:
 
         if (adminService.existsByEmail(adminRequest.getEmail())) {
             log.info("Admin was deleted: {}.", adminService.removeAdminByEmail("nikki@gmail.com"));
