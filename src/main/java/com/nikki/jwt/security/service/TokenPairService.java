@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class TokenPairService {
 
     private final TokenRepository tokenRepository;
@@ -41,10 +41,8 @@ public class TokenPairService {
     }
 
     public void deleteAllTokensAndRefreshTokensBySecurityUserEmail(String email) {
-        List<Token> tokens = tokenRepository.findAllTokensBySecurityUserEmail(email);
-        List<RefreshToken> refreshTokens = refreshTokenRepository.findAllRefreshTokensBySecurityUserEmail(email);
-        tokenRepository.deleteAll(tokens);
-        refreshTokenRepository.deleteAll(refreshTokens);
+        tokenRepository.deleteTokensBySecurityUserEmail(email);
+        refreshTokenRepository.deleteRefreshTokensBySecurityUserEmail(email);
     }
 
     public void revokeAllUserTokens(Long id) {
@@ -64,7 +62,7 @@ public class TokenPairService {
 
     public void saveTokenPair(SecurityUser securityUser, TokenPair tokenPair) {
         revokeAllUserTokens(securityUser.getId());
-        Token token = null;
+        Token token;
         try {
             token = Token.builder()
                     .token(tokenPair.getAccessToken())
@@ -76,7 +74,7 @@ public class TokenPairService {
         }
         tokenRepository.save(token);
 
-        RefreshToken refreshToken = null;
+        RefreshToken refreshToken;
         try {
             refreshToken = RefreshToken.builder()
                     .token(tokenPair.getRefreshToken())

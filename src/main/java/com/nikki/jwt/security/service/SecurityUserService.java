@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 @Transactional
 @RequiredArgsConstructor
-@Service
 public class SecurityUserService {
 
     private final TokenPairService tokenPairService;
@@ -28,7 +28,7 @@ public class SecurityUserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    public SecurityUser saveSecurityUser(CreateSecurityUserRequest request, String roleName) {
+    public SecurityUser createSecurityUser(CreateSecurityUserRequest request, String roleName) {
         Role role = roleRepository.findByName(roleName).orElseThrow(
                 () -> {
                     throw HandledException.builder()
@@ -39,13 +39,20 @@ public class SecurityUserService {
         );
         Set<Role> roles = new HashSet<>();
         roles.add(role);
+        return saveSecurityUser(request, roles);
+    }
 
+    private SecurityUser saveSecurityUser(CreateSecurityUserRequest request, Set<Role> roles) {
         SecurityUser securityUser = SecurityUser.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
                 .tokens(new ArrayList<>())
                 .build();
+        return save(securityUser);
+    }
+
+    public SecurityUser save(SecurityUser securityUser) {
         return securityUserRepository.save(securityUser);
     }
 

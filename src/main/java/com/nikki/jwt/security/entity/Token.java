@@ -34,10 +34,10 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Token {" +
-                "id: " + id +
+        return "Token: {" +
+                " id: " + id +
                 ", revoked: " + revoked +
                 ", securityUserId: " + securityUser.getId() +
-                '}';
+                " " + '}';
     }
 }

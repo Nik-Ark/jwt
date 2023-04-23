@@ -1,11 +1,14 @@
 package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.response.exception.HandledException;
+import com.nikki.jwt.security.api.role.ROLE;
 import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.entity.*;
 import com.nikki.jwt.security.repository.*;
+import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,12 +20,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 // METHOD AUTHENTICATION BY ADMIN AND MANAGER ROLES HERE (if needed)
-@RequiredArgsConstructor
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ClientService {
 
     private final SecurityUserService securityUserService;
     private final ClientRepository clientRepository;
+    private final ValidationUtil validationUtil;
 
     public List<ClientResponse> getClients(Integer count) {
         long total = clientRepository.count();
@@ -36,7 +41,22 @@ public class ClientService {
                 .map(this::mapToClientResponse).collect(Collectors.toList());
     }
 
-    public Client saveClient(CreateClientRequest request) {
+    public SecurityUser createClient(CreateClientRequest request) {
+        validationUtil.validationRequest(request);
+        if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
+            log.error("nickname already exists: {}", request.getEmail());
+            throw HandledException.builder()
+                    .message("This nickname already exists, please enter another nickname")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
+        }
+
+        SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.CLIENT.name());
+        saveClient(request);
+        return securityUser;
+    }
+
+    private Client saveClient(CreateClientRequest request) {
         Client client = Client.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
@@ -44,6 +64,10 @@ public class ClientService {
                 .phoneNumber(request.getPhoneNumber())
                 .city(request.getCity())
                 .build();
+        return save(client);
+    }
+
+    public Client save(Client client) {
         return clientRepository.save(client);
     }
 

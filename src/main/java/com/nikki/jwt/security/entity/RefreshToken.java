@@ -34,10 +34,10 @@ public class RefreshToken {
 
     @Override
     public String toString() {
-        return "RefreshToken {" +
-                "id: " + id +
+        return "RefreshToken: {" +
+                " id: " + id +
                 ", revoked: " + revoked +
                 ", securityUserId: " + securityUser.getId() +
-                '}';
+                " " + '}';
     }
 }

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS security_users
 (
-    id              BIGINT NOT NULL AUTO_INCREMENT,
+    id              BIGINT          NOT NULL AUTO_INCREMENT,
     email           VARCHAR(45)     NOT NULL UNIQUE,
     password        VARCHAR(100)    NOT NULL,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS security_users
 
 CREATE TABLE IF NOT EXISTS roles
 (
-    id              BIGINT NOT NULL AUTO_INCREMENT,
+    id              BIGINT          NOT NULL AUTO_INCREMENT,
     name            VARCHAR(45)     NOT NULL UNIQUE,
     PRIMARY KEY     (id)
 ) COLLATE utf8_bin;

@@ -9,15 +9,15 @@ import com.nikki.jwt.security.entity.Admin;
 import com.nikki.jwt.security.repository.AdminRepository;
 import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-@RequiredArgsConstructor
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class AdminService {
 
     private final AdminRepository adminRepository;
@@ -27,12 +27,13 @@ public class AdminService {
     public AdminResponse createAdmin(CreateAdminRequest request) {
         validationUtil.validationRequest(request);
         if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
+            log.error("nickname already exists: {}", request.getEmail());
             throw HandledException.builder()
                     .message("This nickname already exists, please enter another nickname")
                     .httpStatus(HttpStatus.CONFLICT)
                     .build();
         }
-        securityUserService.saveSecurityUser(request, ROLE.ADMIN.name());
+        securityUserService.createSecurityUser(request, ROLE.ADMIN.name());
         Admin admin = saveAdmin(request);
         return mapToAdminResponse(admin);
     }
@@ -44,6 +45,10 @@ public class AdminService {
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .build();
+        return save(admin);
+    }
+
+    public Admin save(Admin admin) {
         return adminRepository.save(admin);
     }
 
@@ -81,13 +86,19 @@ public class AdminService {
         return mapToAdminResponse(admin);
     }
 
-    public AdminResponse changeAdminInfoSelf(ChangeAdminInfoRequest request) {
+    public AdminResponse changeAdminInfo(ChangeAdminInfoRequest request) {
         validationUtil.validationRequest(request);
         securityUserService.validateIssuerPassword(request.getIssuerPassword());
-        return changeAdminInfoByEmail(SecurityContextHolder.getContext().getAuthentication().getName(), request);
+        return changeAdminInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    private AdminResponse changeAdminInfoByEmail(String email, ChangeAdminInfoRequest request) {
+    public AdminResponse changeAdminInfo(ChangeAdminInfoRequest request, String email) {
+        validationUtil.validationRequest(request);
+        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        return changeAdminInfoByEmail(request, email);
+    }
+
+    private AdminResponse changeAdminInfoByEmail(ChangeAdminInfoRequest request, String email) {
         Admin admin = findAdminByEmail(email);
         admin.setFirstName(request.getFirstName());
         admin.setLastName(request.getLastName());
@@ -96,7 +107,7 @@ public class AdminService {
         return mapToAdminResponse(admin);
     }
 
-    private AdminResponse mapToAdminResponse(Admin admin) {
+    public AdminResponse mapToAdminResponse(Admin admin) {
         return AdminResponse.builder()
                 .email(admin.getEmail())
                 .firstName(admin.getFirstName())

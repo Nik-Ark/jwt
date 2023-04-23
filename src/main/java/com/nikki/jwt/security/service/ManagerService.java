@@ -5,9 +5,11 @@ import com.nikki.jwt.security.api.role.ROLE;
 import com.nikki.jwt.security.dto.manager.CreateManagerRequest;
 import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.entity.Manager;
+import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.ManagerRepository;
 import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,8 +20,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 // METHOD AUTHENTICATION BY ADMIN ROLE HERE (if needed)
-@RequiredArgsConstructor
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ManagerService {
 
     private final SecurityUserService securityUserService;
@@ -41,12 +44,13 @@ public class ManagerService {
     public ManagerResponse createManager(CreateManagerRequest request) {
         validationUtil.validationRequest(request);
         if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
+            log.error("nickname already exists: {}", request.getEmail());
             throw HandledException.builder()
                     .message("This nickname already exists, please enter another nickname")
                     .httpStatus(HttpStatus.CONFLICT)
                     .build();
         }
-        securityUserService.saveSecurityUser(request, ROLE.MANAGER.name());
+        SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.MANAGER.name());
         Manager manager = saveManager(request);
         return mapToManagerResponse(manager);
     }
@@ -58,6 +62,10 @@ public class ManagerService {
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .build();
+        return save(manager);
+    }
+
+    public Manager save(Manager manager) {
         return managerRepository.save(manager);
     }
 

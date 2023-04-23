@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+@Service
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class LogoutService implements LogoutHandler {
     private final TokenPairService tokenPairService;
     private final JwtUtil jwtUtil;
