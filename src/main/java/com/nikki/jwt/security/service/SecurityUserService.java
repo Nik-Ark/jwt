@@ -67,7 +67,7 @@ public class SecurityUserService {
     public void validateIssuerPassword(String issuerPassword) {
         SecurityUser securityUser =
                 findSecurityUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (passwordEncoder.matches(securityUser.getPassword(), issuerPassword)) {
+        if (!passwordEncoder.matches(issuerPassword, securityUser.getPassword())) {
             throw HandledException.builder()
                     .message("Issuer is not valid")
                     .httpStatus(HttpStatus.BAD_REQUEST)
