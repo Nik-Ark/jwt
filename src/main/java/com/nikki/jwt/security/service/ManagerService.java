@@ -51,16 +51,17 @@ public class ManagerService {
                     .build();
         }
         SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.MANAGER.name());
-        Manager manager = saveManager(request);
+        Manager manager = saveManager(request, securityUser);
         return mapToManagerResponse(manager);
     }
 
-    private Manager saveManager(CreateManagerRequest request) {
+    private Manager saveManager(CreateManagerRequest request, SecurityUser securityUser) {
         Manager manager = Manager.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
+                .securityUser(securityUser)
                 .build();
         return save(manager);
     }

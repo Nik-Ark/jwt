@@ -1,9 +1,6 @@
 package com.nikki.jwt.security.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -16,6 +13,10 @@ import lombok.*;
 public class Client {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "email")
     private String email;
 
@@ -30,6 +31,10 @@ public class Client {
 
     @Column(name = "city")
     private String city;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sec_user_id")
+    private SecurityUser securityUser;
 
     @Override
     public String toString() {

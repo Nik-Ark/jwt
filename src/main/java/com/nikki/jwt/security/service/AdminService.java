@@ -6,6 +6,7 @@ import com.nikki.jwt.security.dto.admin.AdminResponse;
 import com.nikki.jwt.security.dto.admin.ChangeAdminInfoRequest;
 import com.nikki.jwt.security.dto.admin.CreateAdminRequest;
 import com.nikki.jwt.security.entity.Admin;
+import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.AdminRepository;
 import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +34,18 @@ public class AdminService {
                     .httpStatus(HttpStatus.CONFLICT)
                     .build();
         }
-        securityUserService.createSecurityUser(request, ROLE.ADMIN.name());
-        Admin admin = saveAdmin(request);
+        SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.ADMIN.name());
+        Admin admin = saveAdmin(request, securityUser);
         return mapToAdminResponse(admin);
     }
 
-    private Admin saveAdmin(CreateAdminRequest request) {
+    private Admin saveAdmin(CreateAdminRequest request, SecurityUser securityUser) {
         Admin admin = Admin.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
+                .securityUser(securityUser)
                 .build();
         return save(admin);
     }

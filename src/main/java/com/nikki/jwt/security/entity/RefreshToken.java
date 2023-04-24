@@ -29,7 +29,7 @@ public class RefreshToken {
     private Date expiryDate;
 
     @ManyToOne
-    @JoinColumn(name = "security_user_id")
+    @JoinColumn(name = "sec_user_id")
     private SecurityUser securityUser;
 
     @Override

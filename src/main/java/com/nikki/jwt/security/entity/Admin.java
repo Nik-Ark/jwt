@@ -13,6 +13,10 @@ import lombok.*;
 public class Admin {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "email")
     private String email;
 
@@ -24,6 +28,10 @@ public class Admin {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sec_user_id")
+    private SecurityUser securityUser;
 
     @Override
     public String toString() {

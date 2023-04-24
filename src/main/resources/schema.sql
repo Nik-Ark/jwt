@@ -28,53 +28,62 @@ CREATE TABLE IF NOT EXISTS security_users_roles
 
 CREATE TABLE IF NOT EXISTS tokens
 (
-    id                  BIGINT NOT NULL     AUTO_INCREMENT,
+    id                  BIGINT              NOT NULL AUTO_INCREMENT,
     token               VARCHAR(256)        NOT NULL UNIQUE,
     revoked             BOOLEAN             DEFAULT FALSE,
     expiry_date         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    security_user_id    BIGINT,
+    sec_user_id         BIGINT,
     PRIMARY KEY         (id),
-    FOREIGN KEY         (security_user_id)  REFERENCES jwt_user_db.security_users(id)
+    FOREIGN KEY         (sec_user_id)       REFERENCES jwt_user_db.security_users(id)
 ) COLLATE utf8_bin;
 
 CREATE TABLE IF NOT EXISTS refresh_tokens
 (
-    id                  BIGINT NOT NULL     AUTO_INCREMENT,
+    id                  BIGINT              NOT NULL AUTO_INCREMENT,
     refresh_token       VARCHAR(256)        NOT NULL UNIQUE,
     revoked             BOOLEAN             DEFAULT FALSE,
     expiry_date         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    security_user_id    BIGINT,
+    sec_user_id         BIGINT,
     PRIMARY KEY         (id),
-    FOREIGN KEY         (security_user_id)  REFERENCES jwt_user_db.security_users(id)
+    FOREIGN KEY         (sec_user_id)       REFERENCES jwt_user_db.security_users(id)
 ) COLLATE utf8_bin;
 
 CREATE TABLE IF NOT EXISTS clients
 (
+    id              BIGINT          NOT NULL AUTO_INCREMENT,
     email           VARCHAR(45)     NOT NULL,
     first_name      VARCHAR(45)     NOT NULL,
     last_name       VARCHAR(45)     NOT NULL,
     phone_number    VARCHAR(45)             ,
     city            VARCHAR(45)             ,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY     (email)
+    sec_user_id     BIGINT,
+    PRIMARY KEY     (id),
+    FOREIGN KEY     (sec_user_id)   REFERENCES jwt_user_db.security_users(id)
 ) COLLATE utf8_bin;
 
 CREATE TABLE IF NOT EXISTS managers
 (
+    id              BIGINT          NOT NULL AUTO_INCREMENT,
     email           VARCHAR(45)     NOT NULL,
     first_name      VARCHAR(45)     NOT NULL,
     last_name       VARCHAR(45)     NOT NULL,
     phone_number    VARCHAR(45)             ,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY     (email)
+    sec_user_id     BIGINT,
+    PRIMARY KEY     (id),
+    FOREIGN KEY     (sec_user_id)   REFERENCES jwt_user_db.security_users(id)
 ) COLLATE utf8_bin;
 
 CREATE TABLE IF NOT EXISTS admins
 (
+    id              BIGINT          NOT NULL AUTO_INCREMENT,
     email           VARCHAR(45)     NOT NULL,
     first_name      VARCHAR(45)     NOT NULL,
     last_name       VARCHAR(45)     NOT NULL,
     phone_number    VARCHAR(45)             ,
     time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY     (email)
+    sec_user_id     BIGINT,
+    PRIMARY KEY     (id),
+    FOREIGN KEY     (sec_user_id)   REFERENCES jwt_user_db.security_users(id)
 ) COLLATE utf8_bin;

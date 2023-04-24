@@ -52,17 +52,18 @@ public class ClientService {
         }
 
         SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.CLIENT.name());
-        saveClient(request);
+        saveClient(request, securityUser);
         return securityUser;
     }
 
-    private Client saveClient(CreateClientRequest request) {
+    private Client saveClient(CreateClientRequest request, SecurityUser securityUser) {
         Client client = Client.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .city(request.getCity())
+                .securityUser(securityUser)
                 .build();
         return save(client);
     }
