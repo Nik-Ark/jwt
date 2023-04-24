@@ -1,10 +1,12 @@
 package com.nikki.jwt.security.controller;
 
+import com.nikki.jwt.security.dto.ChangePasswordRequest;
 import com.nikki.jwt.security.dto.admin.AdminResponse;
 import com.nikki.jwt.security.dto.admin.ChangeAdminInfoRequest;
 import com.nikki.jwt.security.dto.email.ChangeEmailRequest;
 import com.nikki.jwt.security.service.AdminService;
 import com.nikki.jwt.security.service.ChangeEmailService;
+import com.nikki.jwt.security.service.ChangePasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ public class ProfileAdminController {
 
     private final AdminService adminService;
     private final ChangeEmailService changeEmailService;
+    private final ChangePasswordService changePasswordService;
 
     @GetMapping
     public ResponseEntity<AdminResponse> getAdminProfile() {
@@ -33,7 +36,7 @@ public class ProfileAdminController {
     }
 
     @PutMapping("/info")
-    public ResponseEntity<AdminResponse> changeAdminInfo(@RequestBody ChangeAdminInfoRequest request) {
+    public ResponseEntity<AdminResponse> changeAdminInfoProfile(@RequestBody ChangeAdminInfoRequest request) {
         log.info("START endpoint profile/admin/info (Put), principal: {}, request: {}.",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request);
 
@@ -44,13 +47,24 @@ public class ProfileAdminController {
     }
 
     @PutMapping("/email")
-    public ResponseEntity<AdminResponse> changeAdminEmail(@RequestBody ChangeEmailRequest request) {
+    public ResponseEntity<AdminResponse> changeAdminEmailProfile(@RequestBody ChangeEmailRequest request) {
         log.info("START endpoint profile/admin/email (Put), principal: {}, request: {}.",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request);
 
-        AdminResponse adminResponse = changeEmailService.changeAdminEmail(request);
+        AdminResponse adminResponse = changeEmailService.changeAdminEmailProfile(request);
 
         log.info("END endpoint profile/admin/email (Put), response: {}.", adminResponse);
+        return new ResponseEntity<>(adminResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<AdminResponse> changeAdminPasswordProfile(@RequestBody ChangePasswordRequest request) {
+        log.info("START endpoint profile/admin/password (Put), principal: {}, request: {}.",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request);
+
+        AdminResponse adminResponse = changePasswordService.changeAdminPasswordProfile(request);
+
+        log.info("END endpoint profile/admin/password (Put), response: {}.", adminResponse);
         return new ResponseEntity<>(adminResponse, HttpStatus.OK);
     }
 }

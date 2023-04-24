@@ -22,6 +22,11 @@ public class CreateClientRequest extends CreateSecurityUserRequest {
     private String email;
 
     @NotNull
+    @NotBlank(message = "password is required")
+    @Pattern(regexp = RegExp.password, message = "invalid password format")
+    private String password;
+
+    @NotNull
     @NotBlank(message = "firstName is required")
     @Pattern(regexp = RegExp.name, message = "invalid name format")
     private String firstName;

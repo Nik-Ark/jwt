@@ -6,6 +6,7 @@ import com.nikki.jwt.security.entity.Role;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.RoleRepository;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
+import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,8 +28,10 @@ public class SecurityUserService {
     private final SecurityUserRepository securityUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ValidationUtil validationUtil;
 
     public SecurityUser createSecurityUser(CreateSecurityUserRequest request, String roleName) {
+        validationUtil.validationRequest(request);
         Role role = roleRepository.findByName(roleName).orElseThrow(
                 () -> {
                     throw HandledException.builder()

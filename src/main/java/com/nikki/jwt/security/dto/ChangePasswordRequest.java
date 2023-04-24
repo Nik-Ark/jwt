@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.dto.email;
+package com.nikki.jwt.security.dto;
 
 import com.nikki.jwt.security.api.regexp.RegExp;
 import jakarta.validation.constraints.NotBlank;
@@ -11,21 +11,19 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChangeEmailRequest {
+public class ChangePasswordRequest {
 
     @NotNull
     @NotBlank(message = "issuer of Put request must provide his password to perform an operation")
     private String issuerPassword;
 
     @NotNull
-    @NotBlank(message = "email is required")
-    @Pattern(regexp = RegExp.email, message = "invalid email format")
-    private String newEmail;
+    @NotBlank(message = "new password is required")
+    @Pattern(regexp = RegExp.password, message = "invalid password format")
+    private String newPassword;
 
     @Override
     public String toString() {
-        return "ChangeEmailRequest: {" +
-                " newEmail: '" + newEmail + '\'' +
-                " " + '}';
+        return "ChangePasswordRequest: {}";
     }
 }
