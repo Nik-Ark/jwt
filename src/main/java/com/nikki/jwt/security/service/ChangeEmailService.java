@@ -34,15 +34,13 @@ public class ChangeEmailService {
     }
 
     private AdminResponse changeAdminEmailByEmail(String oldEmail, String newEmail) {
-        SecurityUser securityUser = securityUserService.findSecurityUserByEmail(oldEmail);
         Admin admin = adminService.findAdminByEmail(oldEmail);
+        SecurityUser securityUser = admin.getSecurityUser();
 
-        securityUser.setEmail(newEmail);
         admin.setEmail(newEmail);
+        securityUser.setEmail(newEmail);
 
-        securityUserService.save(securityUser);
         adminService.save(admin);
-
         return adminService.mapToAdminResponse(admin);
     }
 }
