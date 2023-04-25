@@ -18,7 +18,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {
     private final TokenPairService tokenPairService;
-    private final JwtUtil jwtUtil;
 
     @Override
     public void logout(
@@ -37,7 +36,7 @@ public class LogoutService implements LogoutHandler {
         final String jwt = authHeader.substring("Bearer ".length());
 
         try {
-            jwtUtil.extractUsername(jwt);
+            tokenPairService.extractUsername(jwt);
         } catch (Exception e) {
             log.error("Bad credentials in logout");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

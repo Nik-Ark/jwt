@@ -69,7 +69,7 @@ public class AdminService {
         return mapToAdminResponse(admin);
     }
 
-    public boolean existsByEmail(String email) {
+    public boolean adminExistsByEmail(String email) {
         return adminRepository.existsByEmail(email);
     }
 
@@ -79,7 +79,7 @@ public class AdminService {
         );
     }
 
-    public AdminResponse getAdminProfile() {
+    public AdminResponse getAdminProfileSelf() {
         return getAdminProfileByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
@@ -88,20 +88,20 @@ public class AdminService {
         return mapToAdminResponse(admin);
     }
 
-    public AdminResponse changeAdminInfo(ChangeAdminInfoRequest request) {
+    public AdminResponse changeAdminInfoSelf(ChangeAdminInfoRequest request) {
         validationUtil.validationRequest(request);
         securityUserService.validateIssuerPassword(request.getIssuerPassword());
         return changeAdminInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public AdminResponse changeAdminInfo(ChangeAdminInfoRequest request, String email) {
+    public AdminResponse changeAdminInfoSuperior(ChangeAdminInfoRequest request, String targetUserEmail) {
         validationUtil.validationRequest(request);
         securityUserService.validateIssuerPassword(request.getIssuerPassword());
-        return changeAdminInfoByEmail(request, email);
+        return changeAdminInfoByEmail(request, targetUserEmail);
     }
 
-    private AdminResponse changeAdminInfoByEmail(ChangeAdminInfoRequest request, String email) {
-        Admin admin = findAdminByEmail(email);
+    private AdminResponse changeAdminInfoByEmail(ChangeAdminInfoRequest request, String targetUserEmail) {
+        Admin admin = findAdminByEmail(targetUserEmail);
         admin.setFirstName(request.getFirstName());
         admin.setLastName(request.getLastName());
         admin.setPhoneNumber(request.getPhoneNumber());

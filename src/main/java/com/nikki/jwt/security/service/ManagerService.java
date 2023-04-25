@@ -2,6 +2,7 @@ package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.api.role.ROLE;
+import com.nikki.jwt.security.dto.manager.ChangeManagerInfoRequest;
 import com.nikki.jwt.security.dto.manager.CreateManagerRequest;
 import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.entity.Manager;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -85,13 +87,49 @@ public class ManagerService {
         return mapToManagerResponse(manager);
     }
 
+    public boolean managerExistsByEmail(String email) {
+        return managerRepository.existsByEmail(email);
+    }
+
     public Manager findManagerByEmail(String email) {
         return managerRepository.findByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("Manager with email: " + email + " not found")
         );
     }
 
-    private ManagerResponse mapToManagerResponse(Manager manager) {
+    public ManagerResponse getManagerProfileSelf() {
+        return getManagerProfileByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public ManagerResponse getManagerProfileByEmail(String email) {
+        Manager manager = findManagerByEmail(email);
+        return mapToManagerResponse(manager);
+    }
+
+    public ManagerResponse changeManagerInfoSelf(ChangeManagerInfoRequest request) {
+        validationUtil.validationRequest(request);
+        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        return changeManagerInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public ManagerResponse changeManagerInfoSuperior(ChangeManagerInfoRequest request, String targetUserEmail) {
+        validationUtil.validationRequest(request);
+        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        return changeManagerInfoByEmail(request, targetUserEmail);
+    }
+
+
+
+    private ManagerResponse changeManagerInfoByEmail(ChangeManagerInfoRequest request, String targetUserEmail) {
+        Manager manager = findManagerByEmail(targetUserEmail);
+        manager.setFirstName(request.getFirstName());
+        manager.setLastName(request.getLastName());
+        manager.setPhoneNumber(request.getPhoneNumber());
+        managerRepository.save(manager);
+        return mapToManagerResponse(manager);
+    }
+
+    public ManagerResponse mapToManagerResponse(Manager manager) {
         return ManagerResponse.builder()
                 .email(manager.getEmail())
                 .firstName(manager.getFirstName())

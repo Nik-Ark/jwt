@@ -41,7 +41,7 @@ public class ClientService {
                 .map(this::mapToClientResponse).collect(Collectors.toList());
     }
 
-    public SecurityUser createClient(CreateClientRequest request) {
+    public ClientResponse createClient(CreateClientRequest request) {
         validationUtil.validationRequest(request);
         if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
             log.error("nickname already exists: {}", request.getEmail());
@@ -52,8 +52,8 @@ public class ClientService {
         }
 
         SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.CLIENT.name());
-        saveClient(request, securityUser);
-        return securityUser;
+        Client client = saveClient(request, securityUser);
+        return mapToClientResponse(client);
     }
 
     private Client saveClient(CreateClientRequest request, SecurityUser securityUser) {
@@ -93,7 +93,7 @@ public class ClientService {
         );
     }
 
-    private ClientResponse mapToClientResponse(Client client) {
+    public ClientResponse mapToClientResponse(Client client) {
         return ClientResponse.builder()
                 .email(client.getEmail())
                 .firstName(client.getFirstName())

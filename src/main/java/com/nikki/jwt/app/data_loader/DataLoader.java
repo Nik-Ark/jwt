@@ -46,7 +46,7 @@ public class DataLoader implements CommandLineRunner {
 
         */
 
-        if (!adminService.existsByEmail(adminRequest.getEmail())) {
+        if (!adminService.adminExistsByEmail(adminRequest.getEmail())) {
             AdminResponse createdAdmin = adminService.createAdmin(adminRequest);
             log.info("Admin was created: {}.", createdAdmin);
         } else {

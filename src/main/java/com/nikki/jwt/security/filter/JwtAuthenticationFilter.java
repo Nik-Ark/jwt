@@ -1,7 +1,6 @@
 package com.nikki.jwt.security.filter;
 
 import com.nikki.jwt.security.service.TokenPairService;
-import com.nikki.jwt.security.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +23,6 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final TokenPairService tokenPairService;
 
@@ -54,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // OTHER TOKEN PROPERTIES WILL BE VALIDATED ALSO.
         final String userEmail;
         try {
-            userEmail = jwtUtil.extractUsername(jwt);
+            userEmail = tokenPairService.extractUsername(jwt);
         } catch (Exception ex) {
             log.error("From JWT Authentication Filter: {}", ex.getMessage());
             filterChain.doFilter(request, response);
@@ -76,7 +74,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .orElse(false);
 
             try {
-                if (jwtUtil.isTokenValid(jwt, securityUser) && tokenNotRevoked) {
+//                if (jwtUtil.isTokenValid(jwt, securityUser)) {
+                if (tokenNotRevoked) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             securityUser,
                             null,
@@ -90,6 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.info("Security Context Was Set for Principal: {}.",
                             SecurityContextHolder.getContext().getAuthentication().getPrincipal());
                 }
+//                }
             } catch (Exception ex) {
                 log.error("From JWT Authentication Filter: {}", ex.getMessage());
                 filterChain.doFilter(request, response);

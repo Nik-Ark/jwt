@@ -1,11 +1,13 @@
 package com.nikki.jwt.security.util;
 
+import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.dto.token.TokenPair;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -78,6 +80,7 @@ public class JwtUtil {
                 .build();
     }
 
+/*
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
@@ -86,12 +89,13 @@ public class JwtUtil {
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
+*/
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String token) throws RuntimeException {
+    private Claims extractAllClaims(String token) {
         JwtParser jwtParser = Jwts
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -99,9 +103,12 @@ public class JwtUtil {
         Jws<Claims> jws;
         try {
             jws = jwtParser.parseClaimsJws(token);
-        } catch (Exception ex) {
-            log.error("From extractAllClaims: {}", ex.getMessage());
-            throw ex;
+        } catch (RuntimeException jwtException) {
+            log.error("JWT Exception in jwt.util extractAllClaims: {}", jwtException.getMessage());
+            throw HandledException.builder()
+                    .message("Forbidden")
+                    .httpStatus(HttpStatus.FORBIDDEN)
+                    .build();
         }
         return jws.getBody();
     }
