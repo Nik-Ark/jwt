@@ -38,37 +38,31 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<SecurityUserResponse> register(@RequestBody CreateClientRequest request) {
-        log.info("START endpoint register, request: {}", request);
-        log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
-                SecurityContextHolder.getContext().getAuthentication());
+        log.info("START endpoint '/register' (Post), request: {}", request);
 
         SecurityUserResponse securityUserResponse = authenticationService.register(request);
 
-        log.info("END endpoint register, response: {}", securityUserResponse);
+        log.info("END endpoint '/register', response: {}", securityUserResponse);
         return new ResponseEntity<>(securityUserResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<SecurityUserResponse> login(@RequestBody LoginRequest request) {
-        log.info("START endpoint login, request: {}", request);
-        log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
-                SecurityContextHolder.getContext().getAuthentication());
+        log.info("START endpoint '/login' (Post), request: {}", request);
 
         SecurityUserResponse securityUserResponse = authenticationService.login(request);
 
-        log.info("END endpoint login, response: {}", securityUserResponse);
+        log.info("END endpoint '/login', response: {}", securityUserResponse);
         return new ResponseEntity<>(securityUserResponse, HttpStatus.OK);
     }
 
     @GetMapping("/refresh")
     public ResponseEntity<SecurityUserResponse> refreshToken(HttpServletRequest request) {
-        log.info("START endpoint refresh, request: {}", request);
-        log.trace("UsernamePasswordAuthenticationToken in SecurityContext: {}",
-                SecurityContextHolder.getContext().getAuthentication());
+        log.info("START endpoint '/refresh' (Get), request: {}", request);
 
         SecurityUserResponse securityUserResponse = authenticationService.refreshToken(request);
 
-        log.info("END endpoint refresh, response: {}", securityUserResponse);
+        log.info("END endpoint '/refresh', response: {}", securityUserResponse);
         return new ResponseEntity<>(securityUserResponse, HttpStatus.OK);
     }
 }

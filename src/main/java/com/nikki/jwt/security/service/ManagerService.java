@@ -72,7 +72,15 @@ public class ManagerService {
         return managerRepository.save(manager);
     }
 
-    public ManagerResponse removeManagerByEmail(String email) {
+    public ManagerResponse removeManagerSelf() {
+        return removeManagerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public ManagerResponse removeManagerSuperior(String targetUserEmail) {
+        return removeManagerByEmail(targetUserEmail);
+    }
+
+    private ManagerResponse removeManagerByEmail(String email) {
         Manager manager;
         try {
             manager = findManagerByEmail(email);
@@ -97,36 +105,41 @@ public class ManagerService {
         );
     }
 
-    public ManagerResponse getManagerProfileSelf() {
+    public ManagerResponse getManagerInfoSelf() {
         return getManagerProfileByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public ManagerResponse getManagerProfileByEmail(String email) {
+    public ManagerResponse getManagerInfoSuperior(String targetUserEmail) {
+        return getManagerProfileByEmail(targetUserEmail);
+    }
+
+    private ManagerResponse getManagerProfileByEmail(String email) {
         Manager manager = findManagerByEmail(email);
         return mapToManagerResponse(manager);
     }
 
     public ManagerResponse changeManagerInfoSelf(ChangeManagerInfoRequest request) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        validateRequestAndIssuerPassword(request);
         return changeManagerInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public ManagerResponse changeManagerInfoSuperior(ChangeManagerInfoRequest request, String targetUserEmail) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        validateRequestAndIssuerPassword(request);
         return changeManagerInfoByEmail(request, targetUserEmail);
     }
-
-
 
     private ManagerResponse changeManagerInfoByEmail(ChangeManagerInfoRequest request, String targetUserEmail) {
         Manager manager = findManagerByEmail(targetUserEmail);
         manager.setFirstName(request.getFirstName());
         manager.setLastName(request.getLastName());
-        manager.setPhoneNumber(request.getPhoneNumber());
+        manager.setPhoneNumber(request.getPhoneNumber() == null ? manager.getPhoneNumber() : request.getPhoneNumber());
         managerRepository.save(manager);
         return mapToManagerResponse(manager);
+    }
+
+    private void validateRequestAndIssuerPassword(ChangeManagerInfoRequest request) {
+        validationUtil.validationRequest(request);
+        securityUserService.validateIssuerPassword(request.getIssuerPassword());
     }
 
     public ManagerResponse mapToManagerResponse(Manager manager) {

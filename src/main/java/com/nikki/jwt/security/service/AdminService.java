@@ -54,7 +54,15 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
-    public AdminResponse removeAdminByEmail(String email) {
+    public AdminResponse removeAdminSelf() {
+        return removeAdminByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public AdminResponse removeAdminSuperior(String targetUserEmail) {
+        return removeAdminByEmail(targetUserEmail);
+    }
+
+    private AdminResponse removeAdminByEmail(String email) {
         Admin admin;
         try {
             admin = findAdminByEmail(email);
@@ -79,24 +87,26 @@ public class AdminService {
         );
     }
 
-    public AdminResponse getAdminProfileSelf() {
+    public AdminResponse getAdminInfoSelf() {
         return getAdminProfileByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public AdminResponse getAdminProfileByEmail(String email) {
+    public AdminResponse getAdminInfoSuperior(String targetUserEmail) {
+        return getAdminProfileByEmail(targetUserEmail);
+    }
+
+    private AdminResponse getAdminProfileByEmail(String email) {
         Admin admin = findAdminByEmail(email);
         return mapToAdminResponse(admin);
     }
 
     public AdminResponse changeAdminInfoSelf(ChangeAdminInfoRequest request) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        validateRequestAndIssuerPassword(request);
         return changeAdminInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public AdminResponse changeAdminInfoSuperior(ChangeAdminInfoRequest request, String targetUserEmail) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        validateRequestAndIssuerPassword(request);
         return changeAdminInfoByEmail(request, targetUserEmail);
     }
 
@@ -104,9 +114,14 @@ public class AdminService {
         Admin admin = findAdminByEmail(targetUserEmail);
         admin.setFirstName(request.getFirstName());
         admin.setLastName(request.getLastName());
-        admin.setPhoneNumber(request.getPhoneNumber());
+        admin.setPhoneNumber(request.getPhoneNumber() == null ? admin.getPhoneNumber() : request.getPhoneNumber());
         adminRepository.save(admin);
         return mapToAdminResponse(admin);
+    }
+
+    private void validateRequestAndIssuerPassword(ChangeAdminInfoRequest request) {
+        validationUtil.validationRequest(request);
+        securityUserService.validateIssuerPassword(request.getIssuerPassword());
     }
 
     public AdminResponse mapToAdminResponse(Admin admin) {

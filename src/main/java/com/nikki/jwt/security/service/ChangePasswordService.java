@@ -2,8 +2,10 @@ package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.security.dto.ChangePasswordRequest;
 import com.nikki.jwt.security.dto.admin.AdminResponse;
+import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.entity.Admin;
+import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.util.ValidationUtil;
@@ -65,6 +67,27 @@ public class ChangePasswordService {
         securityUser.setPassword(passwordEncoder.encode(newPassword));
         managerService.save(manager);
         return managerService.mapToManagerResponse(manager);
+    }
+
+    public ClientResponse changeClientPasswordSelf(ChangePasswordRequest request) {
+        validateRequestAndIssuerPassword(request);
+        return changeClientPasswordByEmail(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                request.getNewPassword()
+        );
+    }
+
+    public ClientResponse changeClientPasswordSuperior(ChangePasswordRequest request, String targetUserEmail) {
+        validateRequestAndIssuerPassword(request);
+        return changeClientPasswordByEmail(targetUserEmail, request.getNewPassword());
+    }
+
+    private ClientResponse changeClientPasswordByEmail(String targetUserEmail, String newPassword) {
+        Client client = clientService.findClientByEmail(targetUserEmail);
+        SecurityUser securityUser = client.getSecurityUser();
+        securityUser.setPassword(passwordEncoder.encode(newPassword));
+        clientService.save(client);
+        return clientService.mapToClientResponse(client);
     }
 
     private void validateRequestAndIssuerPassword(ChangePasswordRequest request) {

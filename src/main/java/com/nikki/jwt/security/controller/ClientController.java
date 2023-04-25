@@ -23,23 +23,23 @@ public class ClientController {
 
     @GetMapping
     public ResponseEntity<List<ClientResponse>> getClients(@RequestParam(defaultValue = "20") Integer count) {
-        log.info("START endpoint client (Get), request sent by principal: {}, with request param: {}",
+        log.info("START endpoint '/client' (Get), principal: {}, request param (count): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), count);
 
         List<ClientResponse> clients = clientService.getClients(count);
 
-        log.info("END endpoint client (Get), success response containing {} clients.", clients.size());
+        log.info("END endpoint '/client' (Get), response containing {} clients.", clients.size());
         return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<ClientResponse> removeClientByEmail(@RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint client (Delete), request sent by principal: {}, with request email param: {}",
+    public ResponseEntity<ClientResponse> deleteClientByEmail(@RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint '/client' (Delete), principal: {}, request param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
-        ClientResponse clientResponse = clientService.removeClientByEmail(email);
+        ClientResponse clientResponse = clientService.removeClientSuperior(email);
 
-        log.info("END endpoint client (Delete), removed client: {}.", clientResponse);
+        log.info("END endpoint '/client' (Delete), deleted: {}.", clientResponse);
         return new ResponseEntity<>(clientResponse, HttpStatus.OK);
     }
 }

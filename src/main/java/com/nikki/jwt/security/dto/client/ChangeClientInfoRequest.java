@@ -1,7 +1,6 @@
 package com.nikki.jwt.security.dto.client;
 
 import com.nikki.jwt.security.api.regexp.RegExp;
-import com.nikki.jwt.security.dto.security_user.CreateSecurityUserRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -14,17 +13,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateClientRequest extends CreateSecurityUserRequest {
+public class ChangeClientInfoRequest {
 
     @NotNull
-    @NotBlank(message = "email is required")
-    @Pattern(regexp = RegExp.email, message = "invalid email format")
-    private String email;
-
-    @NotNull
-    @NotBlank(message = "password is required")
-    @Pattern(regexp = RegExp.password, message = "invalid password format")
-    private String password;
+    @NotBlank(message = "issuer of Put request must provide his password to perform an operation")
+    private String issuerPassword;
 
     @NotNull
     @NotBlank(message = "firstName is required")
@@ -42,9 +35,8 @@ public class CreateClientRequest extends CreateSecurityUserRequest {
 
     @Override
     public String toString() {
-        return "CreateClientRequest: {" +
-                " email: '" + email + '\'' +
-                ", firstName: '" + firstName + '\'' +
+        return "ChangeClientInfoRequest: {" +
+                " firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +
                 ", phoneNumber: '" + phoneNumber + '\'' +
                 ", city: '" + city + '\'' +

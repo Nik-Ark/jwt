@@ -2,6 +2,7 @@ package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.api.role.ROLE;
+import com.nikki.jwt.security.dto.client.ChangeClientInfoRequest;
 import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.entity.*;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +52,6 @@ public class ClientService {
                     .httpStatus(HttpStatus.CONFLICT)
                     .build();
         }
-
         SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.CLIENT.name());
         Client client = saveClient(request, securityUser);
         return mapToClientResponse(client);
@@ -72,7 +73,15 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-    public ClientResponse removeClientByEmail(String email) {
+    public ClientResponse removeClientSelf() {
+        return removeClientByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public ClientResponse removeClientSuperior(String targetUserEmail) {
+        return removeClientByEmail(targetUserEmail);
+    }
+
+    private ClientResponse removeClientByEmail(String email) {
         Client client;
         try {
             client = findClientByEmail(email);
@@ -87,10 +96,52 @@ public class ClientService {
         return mapToClientResponse(client);
     }
 
+    public boolean clientExistsByEmail(String email) {
+        return clientRepository.existsByEmail(email);
+    }
+
     public Client findClientByEmail(String email) {
         return clientRepository.findByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("Client with email: " + email + " not found")
         );
+    }
+
+    public ClientResponse getClientInfoSelf() {
+        return getClientProfileByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public ClientResponse getClientInfoSuperior(String targetUserEmail) {
+        return getClientProfileByEmail(targetUserEmail);
+    }
+
+    private ClientResponse getClientProfileByEmail(String email) {
+        Client client = findClientByEmail(email);
+        return mapToClientResponse(client);
+    }
+
+    public ClientResponse changeClientInfoSelf(ChangeClientInfoRequest request) {
+        validateRequestAndIssuerPassword(request);
+        return changeClientInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public ClientResponse changeClientInfoSuperior(ChangeClientInfoRequest request, String targetUserEmail) {
+        validateRequestAndIssuerPassword(request);
+        return changeClientInfoByEmail(request, targetUserEmail);
+    }
+
+    private ClientResponse changeClientInfoByEmail(ChangeClientInfoRequest request, String targetUserEmail) {
+        Client client = findClientByEmail(targetUserEmail);
+        client.setFirstName(request.getFirstName());
+        client.setLastName(request.getLastName());
+        client.setPhoneNumber(request.getPhoneNumber() == null ? client.getPhoneNumber() : request.getPhoneNumber());
+        client.setCity(request.getCity() == null ? client.getCity() : request.getCity());
+        clientRepository.save(client);
+        return mapToClientResponse(client);
+    }
+
+    private void validateRequestAndIssuerPassword(ChangeClientInfoRequest request) {
+        validationUtil.validationRequest(request);
+        securityUserService.validateIssuerPassword(request.getIssuerPassword());
     }
 
     public ClientResponse mapToClientResponse(Client client) {

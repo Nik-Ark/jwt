@@ -1,9 +1,13 @@
 package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.response.exception.HandledException;
+import com.nikki.jwt.security.dto.admin.AdminResponse;
+import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.email.ChangeEmailRequest;
+import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.entity.Admin;
+import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.util.ValidationUtil;
@@ -29,18 +33,21 @@ public class ChangeEmailService {
 
     public SecurityUserResponse changeAdminEmailSelf(ChangeEmailRequest request) {
         validateRequestAndIssuerPassword(request);
-        return changeAdminEmailByEmail(
+        Admin admin = changeAdminEmailByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
         );
+        return tokenPairService.createAndSaveTokenPair(admin.getSecurityUser());
     }
 
-    public SecurityUserResponse changeAdminEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
+    public AdminResponse changeAdminEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeAdminEmailByEmail(targetUserEmail, request.getNewEmail());
+        Admin admin = changeAdminEmailByEmail(targetUserEmail, request.getNewEmail());
+        tokenPairService.revokeAllUserTokens(admin.getSecurityUser().getId());
+        return adminService.mapToAdminResponse(admin);
     }
 
-    private SecurityUserResponse changeAdminEmailByEmail(String targetUserEmail, String newEmail) {
+    private Admin changeAdminEmailByEmail(String targetUserEmail, String newEmail) {
         if (securityUserService.securityUserExistsByEmail(newEmail)) {
             log.error("nickname already exists: {}", newEmail);
             throw HandledException.builder()
@@ -52,24 +59,26 @@ public class ChangeEmailService {
         SecurityUser securityUser = admin.getSecurityUser();
         admin.setEmail(newEmail);
         securityUser.setEmail(newEmail);
-        adminService.save(admin);
-        return tokenPairService.createAndSaveTokenPair(securityUser);
+        return adminService.save(admin);
     }
 
     public SecurityUserResponse changeManagerEmailSelf(ChangeEmailRequest request) {
         validateRequestAndIssuerPassword(request);
-        return changeManagerEmailByEmail(
+        Manager manager = changeManagerEmailByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
         );
+        return tokenPairService.createAndSaveTokenPair(manager.getSecurityUser());
     }
 
-    public SecurityUserResponse changeManagerEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
+    public ManagerResponse changeManagerEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeManagerEmailByEmail(targetUserEmail, request.getNewEmail());
+        Manager manager = changeManagerEmailByEmail(targetUserEmail, request.getNewEmail());
+        tokenPairService.revokeAllUserTokens(manager.getSecurityUser().getId());
+        return managerService.mapToManagerResponse(manager);
     }
 
-    private SecurityUserResponse changeManagerEmailByEmail(String targetUserEmail, String newEmail) {
+    private Manager changeManagerEmailByEmail(String targetUserEmail, String newEmail) {
         if (securityUserService.securityUserExistsByEmail(newEmail)) {
             log.error("nickname already exists: {}", newEmail);
             throw HandledException.builder()
@@ -81,8 +90,38 @@ public class ChangeEmailService {
         SecurityUser securityUser = manager.getSecurityUser();
         manager.setEmail(newEmail);
         securityUser.setEmail(newEmail);
-        managerService.save(manager);
-        return tokenPairService.createAndSaveTokenPair(securityUser);
+        return managerService.save(manager);
+    }
+
+    public SecurityUserResponse changeClientEmailSelf(ChangeEmailRequest request) {
+        validateRequestAndIssuerPassword(request);
+        Client client = changeClientEmailByEmail(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                request.getNewEmail()
+        );
+        return tokenPairService.createAndSaveTokenPair(client.getSecurityUser());
+    }
+
+    public ClientResponse changeClientEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
+        validateRequestAndIssuerPassword(request);
+        Client client = changeClientEmailByEmail(targetUserEmail, request.getNewEmail());
+        tokenPairService.revokeAllUserTokens(client.getSecurityUser().getId());
+        return clientService.mapToClientResponse(client);
+    }
+
+    private Client changeClientEmailByEmail(String targetUserEmail, String newEmail) {
+        if (securityUserService.securityUserExistsByEmail(newEmail)) {
+            log.error("nickname already exists: {}", newEmail);
+            throw HandledException.builder()
+                    .message("This nickname already exists, please enter another nickname")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
+        }
+        Client client = clientService.findClientByEmail(targetUserEmail);
+        SecurityUser securityUser = client.getSecurityUser();
+        client.setEmail(newEmail);
+        securityUser.setEmail(newEmail);
+        return clientService.save(client);
     }
 
     private void validateRequestAndIssuerPassword(ChangeEmailRequest request) {
