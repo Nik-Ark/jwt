@@ -1,5 +1,6 @@
 package com.nikki.jwt.security.service;
 
+import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.dto.email.ChangeEmailRequest;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.entity.Admin;
@@ -7,12 +8,15 @@ import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 @RequiredArgsConstructor
 public class ChangeEmailService {
 
@@ -22,24 +26,6 @@ public class ChangeEmailService {
     private final ClientService clientService;
     private final ValidationUtil validationUtil;
     private final TokenPairService tokenPairService;
-
-    /*
-        AS EMAIL CHANGED, OLD TOKENS FOR THIS USER WON'T WORK, BECAUSE IN JWT FILTER FIRSTLY
-        EMAIL IS RETRIEVED FROM TOKEN AND THEN USER FETCHED BY THIS EMAIL FROM DB.
-
-        SO SHOULD I DELETE OLD TOKENS ?
-        OR JUST REGENERATE NEW PAIR (TOKEN & REFRESHTOKEN) ?
-        AND RETURN THEM TO THE USER ?
-
-        FIRST THOUGHT:
-        1). REVOKE ALL USER TOKENS
-        2). GENERATE NEW ONES
-        3). RETURN TO USER
-
-        TokenPair tokenPair = jwtUtil.generateTokenPair(securityUser);
-        tokenPairService.saveTokenPair(securityUser, tokenPair);
-        return mapToSecurityUserResponse(securityUser, tokenPair);
-    */
 
     public SecurityUserResponse changeAdminEmailSelf(ChangeEmailRequest request) {
         validateRequestAndIssuerPassword(request);
@@ -55,6 +41,13 @@ public class ChangeEmailService {
     }
 
     private SecurityUserResponse changeAdminEmailByEmail(String targetUserEmail, String newEmail) {
+        if (securityUserService.securityUserExistsByEmail(newEmail)) {
+            log.error("nickname already exists: {}", newEmail);
+            throw HandledException.builder()
+                    .message("This nickname already exists, please enter another nickname")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
+        }
         Admin admin = adminService.findAdminByEmail(targetUserEmail);
         SecurityUser securityUser = admin.getSecurityUser();
         admin.setEmail(newEmail);
@@ -77,6 +70,13 @@ public class ChangeEmailService {
     }
 
     private SecurityUserResponse changeManagerEmailByEmail(String targetUserEmail, String newEmail) {
+        if (securityUserService.securityUserExistsByEmail(newEmail)) {
+            log.error("nickname already exists: {}", newEmail);
+            throw HandledException.builder()
+                    .message("This nickname already exists, please enter another nickname")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
+        }
         Manager manager = managerService.findManagerByEmail(targetUserEmail);
         SecurityUser securityUser = manager.getSecurityUser();
         manager.setEmail(newEmail);
