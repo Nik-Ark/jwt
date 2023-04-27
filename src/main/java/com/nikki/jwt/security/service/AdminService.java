@@ -59,19 +59,21 @@ public class AdminService {
     }
 
     public AdminResponse removeAdminSuperior(String targetUserEmail) {
-        return removeAdminByEmail(targetUserEmail);
-    }
-
-    private AdminResponse removeAdminByEmail(String email) {
-        Admin admin;
+        AdminResponse adminResponse;
         try {
-            admin = findAdminByEmail(email);
-        } catch (UsernameNotFoundException ex) {
+            adminResponse = removeAdminByEmail(targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Admin with email: {} Not Found", targetUserEmail);
             throw HandledException.builder()
-                    .message("Admin doesn't exist")
+                    .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
+        return adminResponse;
+    }
+
+    private AdminResponse removeAdminByEmail(String email) {
+        Admin admin = findAdminByEmail(email);
         adminRepository.delete(admin);
         securityUserService.deleteSecurityUserByEmail(email);
         return mapToAdminResponse(admin);
@@ -92,7 +94,17 @@ public class AdminService {
     }
 
     public AdminResponse getAdminInfoSuperior(String targetUserEmail) {
-        return getAdminProfileByEmail(targetUserEmail);
+        AdminResponse adminResponse;
+        try {
+            adminResponse = getAdminProfileByEmail(targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Admin with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return adminResponse;
     }
 
     private AdminResponse getAdminProfileByEmail(String email) {
@@ -107,7 +119,17 @@ public class AdminService {
 
     public AdminResponse changeAdminInfoSuperior(ChangeAdminInfoRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeAdminInfoByEmail(request, targetUserEmail);
+        AdminResponse adminResponse;
+        try {
+            adminResponse = changeAdminInfoByEmail(request, targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Admin with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return adminResponse;
     }
 
     private AdminResponse changeAdminInfoByEmail(ChangeAdminInfoRequest request, String targetUserEmail) {

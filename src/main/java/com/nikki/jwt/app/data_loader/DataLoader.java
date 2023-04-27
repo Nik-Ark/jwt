@@ -38,19 +38,11 @@ public class DataLoader implements CommandLineRunner {
                 .phoneNumber("+998974559812")
                 .build();
 
-        /*  DELETE ADMIN IF EXISTS:
-
-        if (adminService.existsByEmail(adminRequest.getEmail())) {
-            log.info("Admin was deleted: {}.", adminService.removeAdminByEmail("nikki@gmail.com"));
-        }
-
-        */
-
         if (!adminService.adminExistsByEmail(adminRequest.getEmail())) {
             AdminResponse createdAdmin = adminService.createAdmin(adminRequest);
             log.info("Admin was created: {}.", createdAdmin);
         } else {
-            AdminResponse fetchedAdmin = adminService.getAdminProfileByEmail(adminRequest.getEmail());
+            AdminResponse fetchedAdmin = adminService.getAdminInfoSuperior(adminRequest.getEmail());
             log.info("Admin already exists and won't be created: {}.", fetchedAdmin);
         }
 

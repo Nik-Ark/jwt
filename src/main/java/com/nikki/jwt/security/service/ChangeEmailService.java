@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,16 @@ public class ChangeEmailService {
 
     public AdminResponse changeAdminEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        Admin admin = changeAdminEmailByEmail(targetUserEmail, request.getNewEmail());
+        Admin admin;
+        try {
+            admin = changeAdminEmailByEmail(targetUserEmail, request.getNewEmail());
+        } catch (UsernameNotFoundException exception) {
+            log.error("Admin with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
         tokenPairService.revokeAllUserTokens(admin.getSecurityUser().getId());
         return adminService.mapToAdminResponse(admin);
     }
@@ -73,7 +83,16 @@ public class ChangeEmailService {
 
     public ManagerResponse changeManagerEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        Manager manager = changeManagerEmailByEmail(targetUserEmail, request.getNewEmail());
+        Manager manager;
+        try {
+            manager = changeManagerEmailByEmail(targetUserEmail, request.getNewEmail());
+        } catch (UsernameNotFoundException exception) {
+            log.error("Manager with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
         tokenPairService.revokeAllUserTokens(manager.getSecurityUser().getId());
         return managerService.mapToManagerResponse(manager);
     }
@@ -104,7 +123,16 @@ public class ChangeEmailService {
 
     public ClientResponse changeClientEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        Client client = changeClientEmailByEmail(targetUserEmail, request.getNewEmail());
+        Client client;
+        try {
+            client = changeClientEmailByEmail(targetUserEmail, request.getNewEmail());
+        } catch (UsernameNotFoundException exception) {
+            log.error("Client with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
         tokenPairService.revokeAllUserTokens(client.getSecurityUser().getId());
         return clientService.mapToClientResponse(client);
     }

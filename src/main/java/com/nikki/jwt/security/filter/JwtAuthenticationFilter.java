@@ -74,7 +74,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .orElse(false);
 
             try {
-//                if (jwtUtil.isTokenValid(jwt, securityUser)) {
                 if (tokenNotRevoked) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             securityUser,
@@ -89,7 +88,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.info("Security Context Was Set for Principal: {}.",
                             SecurityContextHolder.getContext().getAuthentication().getPrincipal());
                 }
-//                }
             } catch (Exception ex) {
                 log.error("From JWT Authentication Filter: {}", ex.getMessage());
                 filterChain.doFilter(request, response);

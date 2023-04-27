@@ -77,19 +77,21 @@ public class ManagerService {
     }
 
     public ManagerResponse removeManagerSuperior(String targetUserEmail) {
-        return removeManagerByEmail(targetUserEmail);
-    }
-
-    private ManagerResponse removeManagerByEmail(String email) {
-        Manager manager;
+        ManagerResponse managerResponse;
         try {
-            manager = findManagerByEmail(email);
-        } catch (UsernameNotFoundException ex) {
+            managerResponse = removeManagerByEmail(targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Manager with email: {} Not Found", targetUserEmail);
             throw HandledException.builder()
-                    .message("Manager doesn't exist")
+                    .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
+        return managerResponse;
+    }
+
+    private ManagerResponse removeManagerByEmail(String email) {
+        Manager manager = findManagerByEmail(email);
         managerRepository.delete(manager);
         securityUserService.deleteSecurityUserByEmail(email);
         return mapToManagerResponse(manager);
@@ -110,7 +112,17 @@ public class ManagerService {
     }
 
     public ManagerResponse getManagerInfoSuperior(String targetUserEmail) {
-        return getManagerProfileByEmail(targetUserEmail);
+        ManagerResponse managerResponse;
+        try {
+            managerResponse = getManagerProfileByEmail(targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Manager with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return managerResponse;
     }
 
     private ManagerResponse getManagerProfileByEmail(String email) {
@@ -125,7 +137,17 @@ public class ManagerService {
 
     public ManagerResponse changeManagerInfoSuperior(ChangeManagerInfoRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeManagerInfoByEmail(request, targetUserEmail);
+        ManagerResponse managerResponse;
+        try {
+            managerResponse = changeManagerInfoByEmail(request, targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Manager with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return managerResponse;
     }
 
     private ManagerResponse changeManagerInfoByEmail(ChangeManagerInfoRequest request, String targetUserEmail) {

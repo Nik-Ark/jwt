@@ -1,5 +1,6 @@
 package com.nikki.jwt.security.service;
 
+import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.dto.ChangePasswordRequest;
 import com.nikki.jwt.security.dto.admin.AdminResponse;
 import com.nikki.jwt.security.dto.client.ClientResponse;
@@ -10,12 +11,16 @@ import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class ChangePasswordService {
@@ -37,7 +42,17 @@ public class ChangePasswordService {
 
     public AdminResponse changeAdminPasswordSuperior(ChangePasswordRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeAdminPasswordByEmail(targetUserEmail, request.getNewPassword());
+        AdminResponse adminResponse;
+        try {
+            adminResponse = changeAdminPasswordByEmail(targetUserEmail, request.getNewPassword());
+        } catch (UsernameNotFoundException exception) {
+            log.error("Admin with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return adminResponse;
     }
 
     private AdminResponse changeAdminPasswordByEmail(String targetUserEmail, String newPassword) {
@@ -58,7 +73,17 @@ public class ChangePasswordService {
 
     public ManagerResponse changeManagerPasswordSuperior(ChangePasswordRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeManagerPasswordByEmail(targetUserEmail, request.getNewPassword());
+        ManagerResponse managerResponse;
+        try {
+            managerResponse = changeManagerPasswordByEmail(targetUserEmail, request.getNewPassword());
+        } catch (UsernameNotFoundException exception) {
+            log.error("Manager with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return managerResponse;
     }
 
     private ManagerResponse changeManagerPasswordByEmail(String targetUserEmail, String newPassword) {
@@ -79,7 +104,17 @@ public class ChangePasswordService {
 
     public ClientResponse changeClientPasswordSuperior(ChangePasswordRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeClientPasswordByEmail(targetUserEmail, request.getNewPassword());
+        ClientResponse clientResponse;
+        try {
+            clientResponse = changeClientPasswordByEmail(targetUserEmail, request.getNewPassword());
+        } catch (UsernameNotFoundException exception) {
+            log.error("Client with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return clientResponse;
     }
 
     private ClientResponse changeClientPasswordByEmail(String targetUserEmail, String newPassword) {

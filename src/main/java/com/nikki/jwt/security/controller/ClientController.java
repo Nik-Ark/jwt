@@ -42,4 +42,15 @@ public class ClientController {
         log.info("END endpoint '/client' (Delete), deleted: {}.", clientResponse);
         return new ResponseEntity<>(clientResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<ClientResponse> getClientInfo(@RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint '/client/info' (Get), principal: {}, request param (email): {}",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
+
+        ClientResponse clientResponse = clientService.getClientInfoSuperior(email);
+
+        log.info("END endpoint '/client/info' (Get), response: {}.", clientResponse);
+        return new ResponseEntity<>(clientResponse, HttpStatus.OK);
+    }
 }

@@ -78,7 +78,17 @@ public class ClientService {
     }
 
     public ClientResponse removeClientSuperior(String targetUserEmail) {
-        return removeClientByEmail(targetUserEmail);
+        ClientResponse clientResponse;
+        try {
+            clientResponse = removeClientByEmail(targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Client with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return clientResponse;
     }
 
     private ClientResponse removeClientByEmail(String email) {
@@ -111,7 +121,17 @@ public class ClientService {
     }
 
     public ClientResponse getClientInfoSuperior(String targetUserEmail) {
-        return getClientProfileByEmail(targetUserEmail);
+        ClientResponse clientResponse;
+        try {
+            clientResponse = getClientProfileByEmail(targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Client with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return clientResponse;
     }
 
     private ClientResponse getClientProfileByEmail(String email) {
@@ -126,7 +146,17 @@ public class ClientService {
 
     public ClientResponse changeClientInfoSuperior(ChangeClientInfoRequest request, String targetUserEmail) {
         validateRequestAndIssuerPassword(request);
-        return changeClientInfoByEmail(request, targetUserEmail);
+        ClientResponse clientResponse;
+        try {
+            clientResponse = changeClientInfoByEmail(request, targetUserEmail);
+        } catch (UsernameNotFoundException exception) {
+            log.error("Client with email: {} Not Found", targetUserEmail);
+            throw HandledException.builder()
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+        return clientResponse;
     }
 
     private ClientResponse changeClientInfoByEmail(ChangeClientInfoRequest request, String targetUserEmail) {
