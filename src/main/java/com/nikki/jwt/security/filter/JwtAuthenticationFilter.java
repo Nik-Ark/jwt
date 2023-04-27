@@ -1,5 +1,6 @@
 package com.nikki.jwt.security.filter;
 
+import com.nikki.jwt.security.entity.Token;
 import com.nikki.jwt.security.service.TokenPairService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
+        /*
+            JWT Filter runs each time when request is sent from Client,
+            It fires even on request which id sent to not protected route
+            ( routes with .permitAll() FilterChain method )
+        */
+        log.info("JWT FILTER STARTED");
+
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -41,15 +50,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring("Bearer ".length());
+        log.trace("JWT Token in Filter: {}", jwt);
 
-        // TRY CATCH HERE !!!
-        // BUT INSTEAD IT IS BETTER TO IMPROVE LOGIC HERE
-        // FIRST I SHOULD CHECK IF THIS TOKEN IS PRESENT IN THE DATABASE
-        // AND AFTER GET USERNAME FROM IT
+        Optional<Token> token = tokenPairService.findByJwtToken(jwt);
+        if (token.isEmpty()) {
+            log.error("At the moment this check will work for both Tokens and Refresh Tokens");
+            log.error("But when Refresh Token will be sent in Cookie, this check will work only with Tokens, " +
+                    " just as it is originally intended");
+            log.error("And this is when instead of checking it hear, it will be possible to throw Exceptions " +
+                    " right in findByToken Method itself.");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        // I CHECKED AND IT TURNS OUT EVEN IF TOKEN IS NOT IN THE DATABASE, JWT_UTIL WILL FIGURE OUT
-        // IF THIS TOKEN IS EXPIRED (BECAUSE IT VALIDATES RECEIVED TOKEN WITH SECRET SIGNATURE
-        // OTHER TOKEN PROPERTIES WILL BE VALIDATED ALSO.
         final String userEmail;
         try {
             userEmail = tokenPairService.extractUsername(jwt);
@@ -69,30 +82,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails securityUser = userDetailsService.loadUserByUsername(userEmail);
-            boolean tokenNotRevoked = tokenPairService.findByJwtToken(jwt)
-                    .map(token -> !token.isRevoked())
-                    .orElse(false);
+            log.trace("Security User in JWT Filter: {}", securityUser);
 
-            try {
-                if (tokenNotRevoked) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            securityUser,
-                            null,
-                            securityUser.getAuthorities()
-                    );
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    securityUser,
+                    null,
+                    securityUser.getAuthorities()
+            );
 
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                    log.info("Security Context Was Set for Principal: {}.",
-                            SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-                }
-            } catch (Exception ex) {
-                log.error("From JWT Authentication Filter: {}", ex.getMessage());
-                filterChain.doFilter(request, response);
-                return;
-            }
+            log.info("Security Context Was Set for Principal: {}.",
+                    SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         }
         filterChain.doFilter(request, response);
     }

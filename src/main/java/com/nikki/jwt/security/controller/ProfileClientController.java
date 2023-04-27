@@ -3,6 +3,7 @@ package com.nikki.jwt.security.controller;
 import com.nikki.jwt.security.dto.ChangePasswordRequest;
 import com.nikki.jwt.security.dto.client.ChangeClientInfoRequest;
 import com.nikki.jwt.security.dto.client.ClientResponse;
+import com.nikki.jwt.security.dto.delete.DeleteRequest;
 import com.nikki.jwt.security.dto.email.ChangeEmailRequest;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.service.ChangeEmailService;
@@ -69,14 +70,15 @@ public class ProfileClientController {
         return new ResponseEntity<>(clientResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<ClientResponse> deleteClientProfile() {
-        log.info("START endpoint '/profile/client' (Delete), principal: {}.",
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/delete")
+    public void deleteClientProfile(@RequestBody DeleteRequest request) {
+        log.info("START endpoint '/profile/client/delete' (Post), principal: {}.",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
-        ClientResponse clientResponse = clientService.removeClientSelf();
+        clientService.removeClientSelf(request);
 
-        log.info("END endpoint '/profile/client' (Delete), deleted: {}.", clientResponse);
-        return new ResponseEntity<>(clientResponse, HttpStatus.OK);
+        log.info("END endpoint '/profile/client/delete' (Post), Client with email: {} deleted.",
+                SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

@@ -1,6 +1,7 @@
 package com.nikki.jwt.security.controller;
 
 import com.nikki.jwt.security.dto.client.ClientResponse;
+import com.nikki.jwt.security.dto.delete.DeleteRequest;
 import com.nikki.jwt.security.service.ClientService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,15 +33,15 @@ public class ClientController {
         return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<ClientResponse> deleteClientByEmail(@RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint '/client' (Delete), principal: {}, request param (email): {}",
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/delete")
+    public void deleteClientByEmail(@RequestBody DeleteRequest request, @RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint '/client/delete' (Post), principal: {}, request param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
-        ClientResponse clientResponse = clientService.removeClientSuperior(email);
+        clientService.removeClientSuperior(request, email);
 
-        log.info("END endpoint '/client' (Delete), deleted: {}.", clientResponse);
-        return new ResponseEntity<>(clientResponse, HttpStatus.OK);
+        log.info("END endpoint '/client/delete' (Post), Client with email: {} deleted.", email);
     }
 
     @GetMapping("/info")

@@ -2,6 +2,7 @@ package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.api.role.ROLE;
+import com.nikki.jwt.security.dto.delete.DeleteRequest;
 import com.nikki.jwt.security.dto.manager.ChangeManagerInfoRequest;
 import com.nikki.jwt.security.dto.manager.CreateManagerRequest;
 import com.nikki.jwt.security.dto.manager.ManagerResponse;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 // METHOD AUTHENTICATION BY ADMIN ROLE HERE (if needed)
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class ManagerService {
 
@@ -72,29 +75,19 @@ public class ManagerService {
         return managerRepository.save(manager);
     }
 
-    public ManagerResponse removeManagerSelf() {
-        return removeManagerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public void removeManagerSelf(DeleteRequest request) {
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        removeManagerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public ManagerResponse removeManagerSuperior(String targetUserEmail) {
-        ManagerResponse managerResponse;
-        try {
-            managerResponse = removeManagerByEmail(targetUserEmail);
-        } catch (UsernameNotFoundException exception) {
-            log.error("Manager with email: {} Not Found", targetUserEmail);
-            throw HandledException.builder()
-                    .message("Bad request")
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
-        }
-        return managerResponse;
+    public void removeManagerSuperior(DeleteRequest request, String targetUserEmail) {
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        removeManagerByEmail(targetUserEmail);
     }
 
-    private ManagerResponse removeManagerByEmail(String email) {
-        Manager manager = findManagerByEmail(email);
-        managerRepository.delete(manager);
+    private void removeManagerByEmail(String email) {
+        managerRepository.deleteManagerByEmail(email);
         securityUserService.deleteSecurityUserByEmail(email);
-        return mapToManagerResponse(manager);
     }
 
     public boolean managerExistsByEmail(String email) {
@@ -131,12 +124,12 @@ public class ManagerService {
     }
 
     public ManagerResponse changeManagerInfoSelf(ChangeManagerInfoRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
         return changeManagerInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public ManagerResponse changeManagerInfoSuperior(ChangeManagerInfoRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
         ManagerResponse managerResponse;
         try {
             managerResponse = changeManagerInfoByEmail(request, targetUserEmail);
@@ -159,9 +152,9 @@ public class ManagerService {
         return mapToManagerResponse(manager);
     }
 
-    private void validateRequestAndIssuerPassword(ChangeManagerInfoRequest request) {
+    private <T> void validateRequestAndIssuerPassword(T request, String password) {
         validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        securityUserService.validateIssuerPassword(password);
     }
 
     public ManagerResponse mapToManagerResponse(Manager manager) {

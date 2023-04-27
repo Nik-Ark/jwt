@@ -10,4 +10,6 @@ public interface ManagerRepository extends JpaRepository<Manager, String> {
     boolean existsByEmail(String email);
 
     Optional<Manager> findByEmail(String email);
+
+    void deleteManagerByEmail(String email);
 }

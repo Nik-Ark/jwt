@@ -53,7 +53,7 @@ public class ChangeEmailService {
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
-        tokenPairService.revokeAllUserTokens(admin.getSecurityUser().getId());
+        tokenPairService.deleteAllTokensAndRefreshTokensBySecurityUserEmail(admin.getSecurityUser().getEmail());
         return adminService.mapToAdminResponse(admin);
     }
 
@@ -93,7 +93,7 @@ public class ChangeEmailService {
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
-        tokenPairService.revokeAllUserTokens(manager.getSecurityUser().getId());
+        tokenPairService.deleteAllTokensAndRefreshTokensBySecurityUserEmail(manager.getSecurityUser().getEmail());
         return managerService.mapToManagerResponse(manager);
     }
 
@@ -133,7 +133,7 @@ public class ChangeEmailService {
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
-        tokenPairService.revokeAllUserTokens(client.getSecurityUser().getId());
+        tokenPairService.deleteAllTokensAndRefreshTokensBySecurityUserEmail(client.getSecurityUser().getEmail());
         return clientService.mapToClientResponse(client);
     }
 

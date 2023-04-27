@@ -51,8 +51,6 @@ CREATE TABLE tokens
 (
     id                  BIGINT NOT NULL     AUTO_INCREMENT,
     token               VARCHAR(256)        NOT NULL UNIQUE,
-    revoked             BOOLEAN             DEFAULT FALSE,
-    expiry_date         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sec_user_id         BIGINT,
     PRIMARY KEY         (id),
     FOREIGN KEY         (sec_user_id)       REFERENCES jwt_user_db.security_users(id)
@@ -62,8 +60,6 @@ CREATE TABLE refresh_tokens
 (
     id                  BIGINT NOT NULL     AUTO_INCREMENT,
     refresh_token       VARCHAR(256)        NOT NULL UNIQUE,
-    revoked             BOOLEAN             DEFAULT FALSE,
-    expiry_date         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sec_user_id         BIGINT,
     PRIMARY KEY         (id),
     FOREIGN KEY         (sec_user_id)       REFERENCES jwt_user_db.security_users(id)

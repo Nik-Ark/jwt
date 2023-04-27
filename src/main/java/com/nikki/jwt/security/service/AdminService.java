@@ -15,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class AdminService {
 
@@ -54,29 +56,17 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
-    public AdminResponse removeAdminSelf() {
-        return removeAdminByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public void removeAdminSelf() {
+        removeAdminByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public AdminResponse removeAdminSuperior(String targetUserEmail) {
-        AdminResponse adminResponse;
-        try {
-            adminResponse = removeAdminByEmail(targetUserEmail);
-        } catch (UsernameNotFoundException exception) {
-            log.error("Admin with email: {} Not Found", targetUserEmail);
-            throw HandledException.builder()
-                    .message("Bad request")
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
-        }
-        return adminResponse;
+    public void removeAdminSuperior(String targetUserEmail) {
+        removeAdminByEmail(targetUserEmail);
     }
 
-    private AdminResponse removeAdminByEmail(String email) {
-        Admin admin = findAdminByEmail(email);
-        adminRepository.delete(admin);
+    private void removeAdminByEmail(String email) {
+        adminRepository.deleteAdminByEmail(email);
         securityUserService.deleteSecurityUserByEmail(email);
-        return mapToAdminResponse(admin);
     }
 
     public boolean adminExistsByEmail(String email) {

@@ -3,8 +3,6 @@ package com.nikki.jwt.security.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,13 +20,7 @@ public class RefreshToken {
     @Column(name = "refresh_token", unique = true)
     private String token;
 
-    @Column(name = "revoked")
-    private boolean revoked;
-
-    @Column(name = "expiry_date")
-    private Date expiryDate;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sec_user_id")
     private SecurityUser securityUser;
 
@@ -36,7 +28,6 @@ public class RefreshToken {
     public String toString() {
         return "RefreshToken: {" +
                 " id: " + id +
-                ", revoked: " + revoked +
                 ", securityUserId: " + securityUser.getId() +
                 " " + '}';
     }

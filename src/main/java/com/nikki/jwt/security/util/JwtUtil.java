@@ -1,13 +1,12 @@
 package com.nikki.jwt.security.util;
 
-import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.dto.token.TokenPair;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -80,10 +79,6 @@ public class JwtUtil {
                 .build();
     }
 
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
     private Claims extractAllClaims(String token) {
         JwtParser jwtParser = Jwts
                 .parserBuilder()
@@ -94,10 +89,7 @@ public class JwtUtil {
             jws = jwtParser.parseClaimsJws(token);
         } catch (RuntimeException jwtException) {
             log.error("JWT Exception in jwt.util extractAllClaims: {}", jwtException.getMessage());
-            throw HandledException.builder()
-                    .message("Forbidden")
-                    .httpStatus(HttpStatus.FORBIDDEN)
-                    .build();
+            throw new BadCredentialsException(jwtException.getMessage());
         }
         return jws.getBody();
     }

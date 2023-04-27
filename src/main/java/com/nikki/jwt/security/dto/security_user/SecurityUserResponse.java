@@ -18,7 +18,7 @@ public class SecurityUserResponse {
     @Override
     public String toString() {
         return "SecurityUserResponse: {" +
-                ", email: '" + email + '\'' +
+                " email: '" + email + '\'' +
                 ", roles: " + Arrays.toString(roles) +
                 " " + '}';
     }

@@ -5,6 +5,7 @@ import com.nikki.jwt.security.api.role.ROLE;
 import com.nikki.jwt.security.dto.client.ChangeClientInfoRequest;
 import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.client.CreateClientRequest;
+import com.nikki.jwt.security.dto.delete.DeleteRequest;
 import com.nikki.jwt.security.entity.*;
 import com.nikki.jwt.security.repository.*;
 import com.nikki.jwt.security.util.ValidationUtil;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 // METHOD AUTHENTICATION BY ADMIN AND MANAGER ROLES HERE (if needed)
 @Service
+@Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class ClientService {
@@ -73,37 +76,19 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-    public ClientResponse removeClientSelf() {
-        return removeClientByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public void removeClientSelf(DeleteRequest request) {
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        removeClientByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public ClientResponse removeClientSuperior(String targetUserEmail) {
-        ClientResponse clientResponse;
-        try {
-            clientResponse = removeClientByEmail(targetUserEmail);
-        } catch (UsernameNotFoundException exception) {
-            log.error("Client with email: {} Not Found", targetUserEmail);
-            throw HandledException.builder()
-                    .message("Bad request")
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
-        }
-        return clientResponse;
+    public void removeClientSuperior(DeleteRequest request, String targetUserEmail) {
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        removeClientByEmail(targetUserEmail);
     }
 
-    private ClientResponse removeClientByEmail(String email) {
-        Client client;
-        try {
-            client = findClientByEmail(email);
-        } catch (UsernameNotFoundException ex) {
-            throw HandledException.builder()
-                    .message("Client doesn't exist")
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
-        }
-        clientRepository.delete(client);
+    private void removeClientByEmail(String email) {
+        clientRepository.deleteClientByEmail(email);
         securityUserService.deleteSecurityUserByEmail(email);
-        return mapToClientResponse(client);
     }
 
     public boolean clientExistsByEmail(String email) {
@@ -140,12 +125,12 @@ public class ClientService {
     }
 
     public ClientResponse changeClientInfoSelf(ChangeClientInfoRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
         return changeClientInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public ClientResponse changeClientInfoSuperior(ChangeClientInfoRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
         ClientResponse clientResponse;
         try {
             clientResponse = changeClientInfoByEmail(request, targetUserEmail);
@@ -169,9 +154,9 @@ public class ClientService {
         return mapToClientResponse(client);
     }
 
-    private void validateRequestAndIssuerPassword(ChangeClientInfoRequest request) {
+    private <T> void validateRequestAndIssuerPassword(T request, String password) {
         validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
+        securityUserService.validateIssuerPassword(password);
     }
 
     public ClientResponse mapToClientResponse(Client client) {

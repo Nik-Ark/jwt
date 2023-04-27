@@ -39,6 +39,8 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<SecurityUserResponse> register(@RequestBody CreateClientRequest request) {
         log.info("START endpoint '/register' (Post), request: {}", request);
+        log.info("Security Context Was Set for Principal: {}.",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         SecurityUserResponse securityUserResponse = authenticationService.register(request);
 
@@ -49,6 +51,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<SecurityUserResponse> login(@RequestBody LoginRequest request) {
         log.info("START endpoint '/login' (Post), request: {}", request);
+        log.info("Security Context Was Set for Principal: {}.",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         SecurityUserResponse securityUserResponse = authenticationService.login(request);
 
@@ -58,7 +62,9 @@ public class AuthenticationController {
 
     @GetMapping("/refresh")
     public ResponseEntity<SecurityUserResponse> refreshToken(HttpServletRequest request) {
-        log.info("START endpoint '/refresh' (Get), request: {}", request);
+        log.info("START endpoint '/refresh' (Get)");
+        log.info("Security Context Was Set for Principal: {}.",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         SecurityUserResponse securityUserResponse = authenticationService.refreshToken(request);
 

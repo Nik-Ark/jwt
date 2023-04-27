@@ -15,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -58,9 +60,10 @@ public class AuthenticationService {
         }
 
         final String refreshJwt = authHeader.substring("Bearer ".length());
-        RefreshToken refreshToken = tokenPairService.findByJwtRefreshToken(refreshJwt).orElse(null);
-        if (refreshToken == null || refreshToken.isRevoked()) {
-            log.error("Invalid refresh token");
+        Optional<RefreshToken> refreshToken = tokenPairService.findByJwtRefreshToken(refreshJwt);
+
+        if (refreshToken.isEmpty()) {
+            log.error("No Refresh Token in DB");
             throw new BadCredentialsException("Correct Jwt Refresh token is not provided");
         }
 

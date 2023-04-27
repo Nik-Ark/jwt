@@ -1,6 +1,7 @@
 package com.nikki.jwt.security.controller;
 
 import com.nikki.jwt.security.dto.ChangePasswordRequest;
+import com.nikki.jwt.security.dto.delete.DeleteRequest;
 import com.nikki.jwt.security.dto.email.ChangeEmailRequest;
 import com.nikki.jwt.security.dto.manager.ChangeManagerInfoRequest;
 import com.nikki.jwt.security.dto.manager.CreateManagerRequest;
@@ -51,15 +52,15 @@ public class ManagerController {
         return new ResponseEntity<>(managerResponse, HttpStatus.CREATED);
     }
 
-    @DeleteMapping
-    public ResponseEntity<ManagerResponse> deleteManager(@RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint '/manager' (Delete), principal: {}, request param (email): {}",
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/delete")
+    public void deleteManager(@RequestBody DeleteRequest request, @RequestParam @NotNull @NotBlank String email) {
+        log.info("START endpoint '/manager/delete' (Post), principal: {}, request param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
-        ManagerResponse managerResponse = managerService.removeManagerSuperior(email);
+        managerService.removeManagerSuperior(request, email);
 
-        log.info("END endpoint '/manager' (Delete), deleted: {}.", managerResponse);
-        return new ResponseEntity<>(managerResponse, HttpStatus.OK);
+        log.info("END endpoint '/manager/delete' (Post), Manager with email: {} deleted.", email);
     }
 
     @GetMapping("/info")
