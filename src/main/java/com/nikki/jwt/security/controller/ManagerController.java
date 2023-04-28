@@ -1,6 +1,6 @@
 package com.nikki.jwt.security.controller;
 
-import com.nikki.jwt.security.dto.ChangePasswordRequest;
+import com.nikki.jwt.security.dto.password.ChangePasswordRequest;
 import com.nikki.jwt.security.dto.delete.DeleteRequest;
 import com.nikki.jwt.security.dto.email.ChangeEmailRequest;
 import com.nikki.jwt.security.dto.manager.ChangeManagerInfoRequest;

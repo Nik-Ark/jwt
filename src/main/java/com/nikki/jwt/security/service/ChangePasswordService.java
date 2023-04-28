@@ -1,7 +1,7 @@
 package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.response.exception.HandledException;
-import com.nikki.jwt.security.dto.ChangePasswordRequest;
+import com.nikki.jwt.security.dto.password.ChangePasswordRequest;
 import com.nikki.jwt.security.dto.admin.AdminResponse;
 import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.manager.ManagerResponse;

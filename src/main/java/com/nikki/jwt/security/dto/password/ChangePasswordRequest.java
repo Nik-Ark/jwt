@@ -1,4 +1,4 @@
-package com.nikki.jwt.security.dto;
+package com.nikki.jwt.security.dto.password;
 
 import com.nikki.jwt.security.api.regexp.RegExp;
 import jakarta.validation.constraints.NotBlank;
