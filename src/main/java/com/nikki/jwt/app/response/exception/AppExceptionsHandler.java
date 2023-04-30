@@ -26,7 +26,7 @@ public class AppExceptionsHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
-        log.error("Authentication Exception after JWT Filter: {}", ex.toString());
+        log.error(ex.toString());
         return new ResponseEntity<>(
                 ErrorResponse.builder()
                         .message("Authentication error")

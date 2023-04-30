@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/manager")
+@RequestMapping("api/v1/managers")
 public class ManagerController {
 
     private final ManagerService managerService;
@@ -32,45 +32,45 @@ public class ManagerController {
 
     @GetMapping
     public ResponseEntity<List<ManagerResponse>> getManagers(@RequestParam(defaultValue = "20") Integer count) {
-        log.info("START endpoint '/manager' (Get), principal: {}, request param (count): {}",
+        log.info("START endpoint '/managers' (Get), principal: {}, request param (count): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), count);
 
         List<ManagerResponse> managers = managerService.getManagers(count);
 
-        log.info("END endpoint '/manager' (Get), response containing {} managers.", managers.size());
+        log.info("END endpoint '/managers' (Get), response containing {} managers.", managers.size());
         return new ResponseEntity<>(managers, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ManagerResponse> createManager(@RequestBody CreateManagerRequest request) {
-        log.info("START endpoint '/manager' (Post), principal: {}, request: {}",
+        log.info("START endpoint '/managers' (Post), principal: {}, request: {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request);
 
         ManagerResponse managerResponse = managerService.createManager(request);
 
-        log.info("END endpoint '/manager' (Post), created: {}.", managerResponse);
+        log.info("END endpoint '/managers' (Post), created: {}.", managerResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.CREATED);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/delete")
     public void deleteManager(@RequestBody DeleteRequest request, @RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint '/manager/delete' (Post), principal: {}, request param (email): {}",
+        log.info("START endpoint '/managers/delete' (Post), principal: {}, request param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
         managerService.removeManagerSuperior(request, email);
 
-        log.info("END endpoint '/manager/delete' (Post), Manager with email: {} deleted.", email);
+        log.info("END endpoint '/managers/delete' (Post), Manager with email: {} deleted.", email);
     }
 
     @GetMapping("/info")
     public ResponseEntity<ManagerResponse> getManagerInfo(@RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint '/manager/info' (Get), principal: {}, request param (email): {}",
+        log.info("START endpoint '/managers/info' (Get), principal: {}, request param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
 
         ManagerResponse managerResponse = managerService.getManagerInfoSuperior(email);
 
-        log.info("END endpoint '/manager/info' (Get), response: {}.", managerResponse);
+        log.info("END endpoint '/managers/info' (Get), response: {}.", managerResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 
@@ -79,12 +79,12 @@ public class ManagerController {
             @RequestBody ChangeManagerInfoRequest request,
             @RequestParam @NotNull @NotBlank String email
     ) {
-        log.info("START endpoint '/manager/info' (Put), principal: {}, request: {}, param (email): {}",
+        log.info("START endpoint '/managers/info' (Put), principal: {}, request: {}, param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request, email);
 
         ManagerResponse managerResponse = managerService.changeManagerInfoSuperior(request, email);
 
-        log.info("END endpoint '/manager/info' (Put), response: {}.", managerResponse);
+        log.info("END endpoint '/managers/info' (Put), response: {}.", managerResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 
@@ -93,12 +93,12 @@ public class ManagerController {
             @RequestBody ChangeEmailRequest request,
             @RequestParam @NotNull @NotBlank String email
     ) {
-        log.info("START endpoint '/manager/email' (Put), principal: {}, request: {}, param (email): {}",
+        log.info("START endpoint '/managers/email' (Put), principal: {}, request: {}, param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request, email);
 
         ManagerResponse managerResponse = changeEmailService.changeManagerEmailSuperior(request, email);
 
-        log.info("END endpoint '/manager/email' (Put), response: {}.", managerResponse);
+        log.info("END endpoint '/managers/email' (Put), response: {}.", managerResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 
@@ -107,12 +107,12 @@ public class ManagerController {
             @RequestBody ChangePasswordRequest request,
             @RequestParam @NotNull @NotBlank String email
     ) {
-        log.info("START endpoint '/manager/password' (Put), principal: {}, request: {}, param (email): {}",
+        log.info("START endpoint '/managers/password' (Put), principal: {}, request: {}, param (email): {}",
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal(), request, email);
 
         ManagerResponse managerResponse = changePasswordService.changeManagerPasswordSuperior(request, email);
 
-        log.info("END endpoint '/manager/password' (Put), response: {}.", managerResponse);
+        log.info("END endpoint '/managers/password' (Put), response: {}.", managerResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 }
