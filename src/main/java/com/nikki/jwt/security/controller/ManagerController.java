@@ -88,6 +88,9 @@ public class ManagerController {
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 
+    /*
+    AFTER CHANGING OF EMAIL AND !!! PASSWORD !!! DELETE TOKENS, SO CHANGED OBJECT HAS TO REAUTHENTICATE
+    */
     @PutMapping("/email")
     public ResponseEntity<ManagerResponse> changeManagerEmail(
             @RequestBody ChangeEmailRequest request,
@@ -102,6 +105,9 @@ public class ManagerController {
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 
+    /*
+    AFTER CHANGING OF EMAIL AND !!! PASSWORD !!! DELETE TOKENS, SO CHANGED OBJECT HAS TO REAUTHENTICATE
+    */
     @PutMapping("/password")
     public ResponseEntity<ManagerResponse> changeManagerPassword(
             @RequestBody ChangePasswordRequest request,
