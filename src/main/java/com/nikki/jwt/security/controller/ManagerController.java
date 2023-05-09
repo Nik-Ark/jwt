@@ -63,14 +63,16 @@ public class ManagerController {
         log.info("END endpoint '/managers/delete' (Post), Manager with email: {} deleted.", email);
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<ManagerResponse> getManagerInfo(@RequestParam @NotNull @NotBlank String email) {
-        log.info("START endpoint '/managers/info' (Get), principal: {}, request param (email): {}",
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal(), email);
+    @GetMapping("/{email}/info")
+    public ResponseEntity<ManagerResponse> getManagerInfo(@NotNull @NotBlank @PathVariable String email) {
+        log.info(
+                "START endpoint '/managers/{}/info' (Get), principal: {}",
+                email, SecurityContextHolder.getContext().getAuthentication().getPrincipal()
+        );
 
         ManagerResponse managerResponse = managerService.getManagerInfoSuperior(email);
 
-        log.info("END endpoint '/managers/info' (Get), response: {}.", managerResponse);
+        log.info("END endpoint '/managers/{}/info' (Get), response: {}.", email, managerResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 
