@@ -40,14 +40,14 @@ public class ManagerService {
             return new ArrayList<>();
         }
         int finalCount = count > total ? (int) total : count;
-        finalCount = Math.min(finalCount, 20);
+        finalCount = Math.min(finalCount, 50);
         Page<Manager> managerPage = managerRepository.findAll(Pageable.ofSize(finalCount));
         return managerPage.getContent().stream()
                 .map(this::mapToManagerResponse).collect(Collectors.toList());
     }
 
     public ManagerResponse createManager(CreateManagerRequest request) {
-        validationUtil.validationRequest(request);
+        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
         if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
             log.error("nickname already exists: {}", request.getEmail());
             throw HandledException.builder()

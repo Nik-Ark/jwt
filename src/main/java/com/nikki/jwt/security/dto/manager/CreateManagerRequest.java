@@ -17,6 +17,10 @@ import lombok.Setter;
 public class CreateManagerRequest extends CreateSecurityUserRequest {
 
     @NotNull
+    @NotBlank(message = "issuer of request must provide his password to perform an operation")
+    private String issuerPassword;
+
+    @NotNull
     @NotBlank(message = "email is required")
     @Pattern(regexp = RegExp.email, message = "invalid email format")
     private String email;

@@ -14,7 +14,7 @@ import lombok.*;
 public class ChangePasswordRequest {
 
     @NotNull
-    @NotBlank(message = "issuer of Put request must provide his password to perform an operation")
+    @NotBlank(message = "issuer of request must provide his password to perform an operation")
     private String issuerPassword;
 
     @NotNull

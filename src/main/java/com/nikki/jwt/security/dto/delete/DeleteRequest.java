@@ -14,7 +14,7 @@ import lombok.Setter;
 public class DeleteRequest {
 
     @NotNull
-    @NotBlank(message = "issuer of Put request must provide his password to perform an operation")
+    @NotBlank(message = "issuer of request must provide his password to perform an operation")
     private String issuerPassword;
 
     @Override
