@@ -28,6 +28,12 @@ public class SecurityUser implements UserDetails {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
     @Column(name = "password")
     private String password;
 
@@ -81,6 +87,8 @@ public class SecurityUser implements UserDetails {
         return "SecurityUser: {" +
                 " id: " + id +
                 ", email: '" + email + '\'' +
+                ", firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
                 ", roles: " + roles +
                 " " + '}';
     }

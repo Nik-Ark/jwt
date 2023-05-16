@@ -1,9 +1,7 @@
 package com.nikki.jwt.security.service;
 
-import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.dto.token.TokenPair;
 import com.nikki.jwt.security.entity.RefreshToken;
-import com.nikki.jwt.security.entity.Role;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.entity.Token;
 import com.nikki.jwt.security.repository.RefreshTokenRepository;
@@ -41,10 +39,10 @@ public class TokenPairService {
         return jwtUtil.extractUsername(token);
     }
 
-    public SecurityUserResponse createAndSaveTokenPair(SecurityUser securityUser) {
+    public TokenPair createAndSaveTokenPair(SecurityUser securityUser) {
         TokenPair tokenPair = createTokenPair(securityUser);
         saveTokenPair(securityUser, tokenPair);
-        return mapToSecurityUserResponse(securityUser, tokenPair);
+        return tokenPair;
     }
 
     public TokenPair createTokenPair(SecurityUser securityUser) {
@@ -64,14 +62,5 @@ public class TokenPairService {
                     .securityUser(securityUser)
                     .build();
         refreshTokenRepository.save(refreshToken);
-    }
-
-    private SecurityUserResponse mapToSecurityUserResponse(SecurityUser securityUser, TokenPair tokenPair) {
-        return SecurityUserResponse.builder()
-                .email(securityUser.getEmail())
-                .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
-                .accessToken(tokenPair.getAccessToken())
-                .refreshToken(tokenPair.getRefreshToken())
-                .build();
     }
 }

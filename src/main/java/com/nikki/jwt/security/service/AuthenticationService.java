@@ -4,6 +4,7 @@ import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.dto.login.LoginRequest;
+import com.nikki.jwt.security.dto.token.TokenPair;
 import com.nikki.jwt.security.entity.RefreshToken;
 import com.nikki.jwt.security.entity.SecurityUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +31,8 @@ public class AuthenticationService {
     public SecurityUserResponse register(CreateClientRequest request) {
         ClientResponse clientResponse = clientService.createClient(request);
         SecurityUser securityUser = securityUserService.findSecurityUserByEmail(clientResponse.getEmail());
-        return tokenPairService.createAndSaveTokenPair(securityUser);
+        TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);
+        return securityUserService.mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
     public SecurityUserResponse login(LoginRequest request) {
@@ -48,7 +50,8 @@ public class AuthenticationService {
 
 
         SecurityUser securityUser = securityUserService.findSecurityUserByEmail(request.getEmail());
-        return tokenPairService.createAndSaveTokenPair(securityUser);
+        TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);
+        return securityUserService.mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
     public SecurityUserResponse refreshToken(HttpServletRequest request) {
@@ -69,6 +72,7 @@ public class AuthenticationService {
 
         final String userEmail = tokenPairService.extractUsername(refreshJwt);
         SecurityUser securityUser = securityUserService.findSecurityUserByEmail(userEmail);
-        return tokenPairService.createAndSaveTokenPair(securityUser);
+        TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);
+        return securityUserService.mapToSecurityUserResponse(securityUser, tokenPair);
     }
 }

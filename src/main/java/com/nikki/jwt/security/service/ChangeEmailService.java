@@ -6,6 +6,7 @@ import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.email.ChangeEmailRequest;
 import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
+import com.nikki.jwt.security.dto.token.TokenPair;
 import com.nikki.jwt.security.entity.Admin;
 import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.Manager;
@@ -38,7 +39,9 @@ public class ChangeEmailService {
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
         );
-        return tokenPairService.createAndSaveTokenPair(admin.getSecurityUser());
+        SecurityUser securityUser = admin.getSecurityUser();
+        TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);
+        return securityUserService.mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
     public AdminResponse changeAdminEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
@@ -78,7 +81,9 @@ public class ChangeEmailService {
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
         );
-        return tokenPairService.createAndSaveTokenPair(manager.getSecurityUser());
+        SecurityUser securityUser = manager.getSecurityUser();
+        TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);
+        return securityUserService.mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
     public ManagerResponse changeManagerEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
@@ -118,7 +123,9 @@ public class ChangeEmailService {
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
         );
-        return tokenPairService.createAndSaveTokenPair(client.getSecurityUser());
+        SecurityUser securityUser = client.getSecurityUser();
+        TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);
+        return securityUserService.mapToSecurityUserResponse(securityUser, tokenPair);
     }
 
     public ClientResponse changeClientEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {

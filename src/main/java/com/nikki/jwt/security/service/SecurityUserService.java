@@ -2,6 +2,8 @@ package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.dto.security_user.CreateSecurityUserRequest;
+import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
+import com.nikki.jwt.security.dto.token.TokenPair;
 import com.nikki.jwt.security.entity.Role;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.RoleRepository;
@@ -48,6 +50,8 @@ public class SecurityUserService {
     private SecurityUser saveSecurityUser(CreateSecurityUserRequest request, Set<Role> roles) {
         SecurityUser securityUser = SecurityUser.builder()
                 .email(request.getEmail())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
                 .tokens(new ArrayList<>())
@@ -83,5 +87,16 @@ public class SecurityUserService {
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
+    }
+
+    public SecurityUserResponse mapToSecurityUserResponse(SecurityUser securityUser, TokenPair tokenPair) {
+        return SecurityUserResponse.builder()
+                .email(securityUser.getEmail())
+                .firstName(securityUser.getFirstName())
+                .lastName(securityUser.getLastName())
+                .roles(securityUser.getRoles().stream().map(Role::getName).toArray(String[] ::new))
+                .accessToken(tokenPair.getAccessToken())
+                .refreshToken(tokenPair.getRefreshToken())
+                .build();
     }
 }

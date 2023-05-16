@@ -11,6 +11,8 @@ import java.util.Arrays;
 @AllArgsConstructor
 public class SecurityUserResponse {
     private String email;
+    private String firstName;
+    private String lastName;
     private String[] roles;
     private String accessToken;
     private String refreshToken;
@@ -19,6 +21,8 @@ public class SecurityUserResponse {
     public String toString() {
         return "SecurityUserResponse: {" +
                 " email: '" + email + '\'' +
+                ", firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
                 ", roles: " + Arrays.toString(roles) +
                 " " + '}';
     }
