@@ -39,6 +39,7 @@ public class FilterChainConfig {
                 .requestMatchers("/api/v1/profile/admin/**").hasRole(ROLE.ADMIN.name())
                 .requestMatchers("/api/v1/clients/**").hasAnyRole(ROLE.MANAGER.name(), ROLE.ADMIN.name())
                 .requestMatchers("/api/v1/managers/**").hasRole(ROLE.ADMIN.name())
+                .requestMatchers("/api/v1/open-ai/**").hasRole(ROLE.ADMIN.name())
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
