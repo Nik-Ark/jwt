@@ -125,6 +125,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<finalName>spring-jwt.jar</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

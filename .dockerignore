@@ -1,0 +1,14 @@
+.idea/
+*.iml
+*.iws
+target/
+.sonar/
+.sonarlint/
+.gitignore
+.github
+.logs
+/src/main/resources/db_management
+
+README.md
+HELP.md
+LICENSE

@@ -13,17 +13,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Indexed;
 
 @Configuration
-@ConfigurationProperties
 @Indexed
 @Data
 @Slf4j
 public class OpenAIClientConfig {
 
+    /*
     @Value("${openai.config.http-client.read-timeout}")
     private long readTimeout;
 
     @Value("${openai.config.http-client.connect-timeout}")
     private long connectTimeout;
+    */
 
     @Value("${openai.config.api-key}")
     private String apiKey;
