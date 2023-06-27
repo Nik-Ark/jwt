@@ -14,8 +14,8 @@
 
 	<groupId>com.nikki</groupId>
 	<artifactId>jwt</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>jwt</name>
+	<version>0.0.1</version>
+	<name>spring-jwt</name>
 	<description>Figuring out Spring-Security JWT Authentication</description>
 
 	<properties>
@@ -125,7 +125,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
-					<finalName>spring-jwt.jar</finalName>
+					<finalName>spring-jwt</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

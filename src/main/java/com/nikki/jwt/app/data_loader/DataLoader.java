@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Profile(value = "dev")
+@Profile(value = "production")
 public class DataLoader implements CommandLineRunner {
 
     private final RoleService roleService;
