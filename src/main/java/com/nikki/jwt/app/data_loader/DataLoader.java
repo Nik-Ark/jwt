@@ -26,27 +26,43 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) {
 
         log.info("***********************************************************");
-        log.info("START DataLoader running in Dev Profile! 🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐");
+        log.info("START DataLoader 🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐");
 
         roleService.createRolesIfNotExist(List.of(ROLE.CLIENT.name(), ROLE.MANAGER.name(), ROLE.ADMIN.name()));
 
-        CreateAdminRequest adminRequest = CreateAdminRequest.builder()
-                .email("nikki@gmail.com")
-                .firstName("Nikki")
-                .lastName("Alex")
-                .password("Nikki1!+")
-                .phoneNumber("+998974559812")
+        CreateAdminRequest adminRequest_1 = CreateAdminRequest.builder()
+                .email("admin@prime.plus")
+                .firstName("Nikita")
+                .lastName("Alekseev")
+                .password("Nikitos111&!")
+                .phoneNumber("+79116993890")
                 .build();
 
-        if (!adminService.adminExistsByEmail(adminRequest.getEmail())) {
-            AdminResponse createdAdmin = adminService.createAdmin(adminRequest);
+        if (!adminService.adminExistsByEmail(adminRequest_1.getEmail())) {
+            AdminResponse createdAdmin = adminService.createAdmin(adminRequest_1);
             log.info("Admin was created: {}.", createdAdmin);
         } else {
-            AdminResponse fetchedAdmin = adminService.getAdminInfoSuperior(adminRequest.getEmail());
+            AdminResponse fetchedAdmin = adminService.getAdminInfoSuperior(adminRequest_1.getEmail());
             log.info("Admin already exists and won't be created: {}.", fetchedAdmin);
         }
 
-        log.info("END DataLoader running in Dev Profile! 🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐");
+        CreateAdminRequest adminRequest_2 = CreateAdminRequest.builder()
+                .email("employer@demo.admin")
+                .firstName("Employer")
+                .lastName("Hire_Me")
+                .password("PotentialEmployer777$")
+                .phoneNumber("+79999999999")
+                .build();
+
+        if (!adminService.adminExistsByEmail(adminRequest_2.getEmail())) {
+            AdminResponse createdAdmin = adminService.createAdmin(adminRequest_2);
+            log.info("Admin was created: {}.", createdAdmin);
+        } else {
+            AdminResponse fetchedAdmin = adminService.getAdminInfoSuperior(adminRequest_2.getEmail());
+            log.info("Admin already exists and won't be created: {}.", fetchedAdmin);
+        }
+
+        log.info("END DataLoader 🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐");
         log.info("***********************************************************");
     }
 }
