@@ -8,7 +8,6 @@ import com.nikki.jwt.security.dto.admin.CreateAdminRequest;
 import com.nikki.jwt.security.entity.Admin;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.AdminRepository;
-import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,17 +24,13 @@ public class AdminService {
 
     private final AdminRepository adminRepository;
     private final SecurityUserService securityUserService;
-    private final ValidationUtil validationUtil;
+    private final ValidationService validationService;
+
+
 
     public AdminResponse createAdmin(CreateAdminRequest request) {
-        validationUtil.validationRequest(request);
-        if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
-            log.error("nickname already exists: {}", request.getEmail());
-            throw HandledException.builder()
-                    .message("This nickname already exists, please enter another nickname")
-                    .httpStatus(HttpStatus.CONFLICT)
-                    .build();
-        }
+        validationService.validateRequest(request);
+        validationService.validateSecurityUserDoesNotExistByEmail(request.getEmail());
         SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.ADMIN.name());
         Admin admin = saveAdmin(request, securityUser);
         return mapToAdminResponse(admin);
@@ -103,12 +98,14 @@ public class AdminService {
     }
 
     public AdminResponse changeAdminInfoSelf(ChangeAdminInfoRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         return changeAdminInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public AdminResponse changeAdminInfoSuperior(ChangeAdminInfoRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         AdminResponse adminResponse;
         try {
             adminResponse = changeAdminInfoByEmail(request, targetUserEmail);
@@ -129,11 +126,6 @@ public class AdminService {
         admin.setPhoneNumber(request.getPhoneNumber() == null ? admin.getPhoneNumber() : request.getPhoneNumber());
         adminRepository.save(admin);
         return mapToAdminResponse(admin);
-    }
-
-    private void validateRequestAndIssuerPassword(ChangeAdminInfoRequest request) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
     }
 
     public AdminResponse mapToAdminResponse(Admin admin) {

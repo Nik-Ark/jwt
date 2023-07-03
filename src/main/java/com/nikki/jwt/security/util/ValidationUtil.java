@@ -19,10 +19,10 @@ public class ValidationUtil {
         this.validator = validator;
     }
 
-    public <T> void validationRequest(T req) {
+    public <T> void validationRequest(T request) {
 
-        if (req != null) {
-            Set<ConstraintViolation<T>> result = validator.validate(req);
+        if (request != null) {
+            Set<ConstraintViolation<T>> result = validator.validate(request);
             if (!result.isEmpty()) {
                 String violations = result.stream()
                         .map(ConstraintViolation::getMessage)

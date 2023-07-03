@@ -54,10 +54,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Optional<Token> token = tokenPairService.findByJwtToken(jwt);
         if (token.isEmpty()) {
-            log.error("At the moment this check will work for both Tokens and Refresh Tokens");
-            log.error("But when Refresh Token will be sent in Cookie, this check will work only with Tokens, " +
+            log.trace("At the moment this check will work for both Tokens and Refresh Tokens");
+            log.trace("But when Refresh Token will be sent in Cookie, this check will work only with Tokens, " +
                     " just as it is originally intended");
-            log.error("And this is when instead of checking it hear, it will be possible to throw Exceptions " +
+            log.trace("And this is when instead of checking it hear, it will be possible to throw Exceptions " +
                     " right in findByToken Method itself.");
             filterChain.doFilter(request, response);
             return;

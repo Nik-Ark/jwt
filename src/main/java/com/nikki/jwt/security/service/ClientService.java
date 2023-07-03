@@ -8,7 +8,6 @@ import com.nikki.jwt.security.dto.client.CreateClientRequest;
 import com.nikki.jwt.security.dto.delete.DeleteRequest;
 import com.nikki.jwt.security.entity.*;
 import com.nikki.jwt.security.repository.*;
-import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +31,9 @@ public class ClientService {
 
     private final SecurityUserService securityUserService;
     private final ClientRepository clientRepository;
-    private final ValidationUtil validationUtil;
+    private final ValidationService validationService;
+
+
 
     public List<ClientResponse> getClients(Integer count) {
         long total = clientRepository.count();
@@ -47,14 +48,8 @@ public class ClientService {
     }
 
     public ClientResponse createClient(CreateClientRequest request) {
-        validationUtil.validationRequest(request);
-        if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
-            log.error("nickname already exists: {}", request.getEmail());
-            throw HandledException.builder()
-                    .message("This nickname already exists, please enter another nickname")
-                    .httpStatus(HttpStatus.CONFLICT)
-                    .build();
-        }
+        validationService.validateRequest(request);
+        validationService.validateSecurityUserDoesNotExistByEmail(request.getEmail());
         SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.CLIENT.name());
         Client client = saveClient(request, securityUser);
         return mapToClientResponse(client);
@@ -77,12 +72,14 @@ public class ClientService {
     }
 
     public void removeClientSelf(DeleteRequest request) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         removeClientByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public void removeClientSuperior(DeleteRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         removeClientByEmail(targetUserEmail);
     }
 
@@ -125,12 +122,14 @@ public class ClientService {
     }
 
     public ClientResponse changeClientInfoSelf(ChangeClientInfoRequest request) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         return changeClientInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public ClientResponse changeClientInfoSuperior(ChangeClientInfoRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         ClientResponse clientResponse;
         try {
             clientResponse = changeClientInfoByEmail(request, targetUserEmail);
@@ -152,11 +151,6 @@ public class ClientService {
         client.setCity(request.getCity() == null ? client.getCity() : request.getCity());
         clientRepository.save(client);
         return mapToClientResponse(client);
-    }
-
-    private <T> void validateRequestAndIssuerPassword(T request, String password) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(password);
     }
 
     public ClientResponse mapToClientResponse(Client client) {

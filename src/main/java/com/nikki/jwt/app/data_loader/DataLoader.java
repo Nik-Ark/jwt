@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Profile(value = "production")
+@Profile(value = "dev")
 public class DataLoader implements CommandLineRunner {
 
     private final RoleService roleService;
@@ -38,12 +38,12 @@ public class DataLoader implements CommandLineRunner {
                 .phoneNumber("+79116993890")
                 .build();
 
-        if (!adminService.adminExistsByEmail(adminRequest_1.getEmail())) {
-            AdminResponse createdAdmin = adminService.createAdmin(adminRequest_1);
-            log.info("Admin was created: {}.", createdAdmin);
-        } else {
+        if (adminService.adminExistsByEmail(adminRequest_1.getEmail())) {
             AdminResponse fetchedAdmin = adminService.getAdminInfoSuperior(adminRequest_1.getEmail());
             log.info("Admin already exists and won't be created: {}.", fetchedAdmin);
+        } else {
+            AdminResponse createdAdmin = adminService.createAdmin(adminRequest_1);
+            log.info("Admin was created: {}.", createdAdmin);
         }
 
         CreateAdminRequest adminRequest_2 = CreateAdminRequest.builder()
@@ -54,12 +54,12 @@ public class DataLoader implements CommandLineRunner {
                 .phoneNumber("+79999999999")
                 .build();
 
-        if (!adminService.adminExistsByEmail(adminRequest_2.getEmail())) {
-            AdminResponse createdAdmin = adminService.createAdmin(adminRequest_2);
-            log.info("Admin was created: {}.", createdAdmin);
-        } else {
+        if (adminService.adminExistsByEmail(adminRequest_2.getEmail())) {
             AdminResponse fetchedAdmin = adminService.getAdminInfoSuperior(adminRequest_2.getEmail());
             log.info("Admin already exists and won't be created: {}.", fetchedAdmin);
+        } else {
+            AdminResponse createdAdmin = adminService.createAdmin(adminRequest_2);
+            log.info("Admin was created: {}.", createdAdmin);
         }
 
         log.info("END DataLoader 🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐🖐");

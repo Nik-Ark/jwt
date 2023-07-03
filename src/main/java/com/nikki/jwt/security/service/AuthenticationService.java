@@ -27,8 +27,14 @@ public class AuthenticationService {
     private final SecurityUserService securityUserService;
     private final ClientService clientService;
     private final TokenPairService tokenPairService;
+    private final ValidationService validationService;
 
     public SecurityUserResponse register(CreateClientRequest request) {
+        validationService.validateRequest(request);
+        validationService.validateSecurityUserDoesNotExistByEmail(request.getEmail());
+
+        // CREATING CANDIDATE FOR REGISTRATION AND SENDING LINK TO EMAIL
+
         ClientResponse clientResponse = clientService.createClient(request);
         SecurityUser securityUser = securityUserService.findSecurityUserByEmail(clientResponse.getEmail());
         TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);

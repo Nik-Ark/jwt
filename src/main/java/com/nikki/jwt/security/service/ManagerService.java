@@ -9,7 +9,6 @@ import com.nikki.jwt.security.dto.manager.ManagerResponse;
 import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.ManagerRepository;
-import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +31,9 @@ public class ManagerService {
 
     private final SecurityUserService securityUserService;
     private final ManagerRepository managerRepository;
-    private final ValidationUtil validationUtil;
+    private final ValidationService validationService;
+
+
 
     public List<ManagerResponse> getManagers(Integer count) {
         long total = managerRepository.count();
@@ -47,14 +48,9 @@ public class ManagerService {
     }
 
     public ManagerResponse createManager(CreateManagerRequest request) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
-        if (securityUserService.securityUserExistsByEmail(request.getEmail())) {
-            log.error("nickname already exists: {}", request.getEmail());
-            throw HandledException.builder()
-                    .message("This nickname already exists, please enter another nickname")
-                    .httpStatus(HttpStatus.CONFLICT)
-                    .build();
-        }
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
+        validationService.validateSecurityUserDoesNotExistByEmail(request.getEmail());
         SecurityUser securityUser = securityUserService.createSecurityUser(request, ROLE.MANAGER.name());
         Manager manager = saveManager(request, securityUser);
         return mapToManagerResponse(manager);
@@ -76,12 +72,14 @@ public class ManagerService {
     }
 
     public void removeManagerSelf(DeleteRequest request) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         removeManagerByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public void removeManagerSuperior(DeleteRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         removeManagerByEmail(targetUserEmail);
     }
 
@@ -124,12 +122,14 @@ public class ManagerService {
     }
 
     public ManagerResponse changeManagerInfoSelf(ChangeManagerInfoRequest request) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         return changeManagerInfoByEmail(request, SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public ManagerResponse changeManagerInfoSuperior(ChangeManagerInfoRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request, request.getIssuerPassword());
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         ManagerResponse managerResponse;
         try {
             managerResponse = changeManagerInfoByEmail(request, targetUserEmail);
@@ -150,11 +150,6 @@ public class ManagerService {
         manager.setPhoneNumber(request.getPhoneNumber() == null ? manager.getPhoneNumber() : request.getPhoneNumber());
         managerRepository.save(manager);
         return mapToManagerResponse(manager);
-    }
-
-    private <T> void validateRequestAndIssuerPassword(T request, String password) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(password);
     }
 
     public ManagerResponse mapToManagerResponse(Manager manager) {
