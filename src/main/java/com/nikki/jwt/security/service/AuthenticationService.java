@@ -2,6 +2,7 @@ package com.nikki.jwt.security.service;
 
 import com.nikki.jwt.security.dto.client.ClientResponse;
 import com.nikki.jwt.security.dto.client.CreateClientRequest;
+import com.nikki.jwt.security.dto.confirm_email.ConfirmRegisterMailMessage;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.dto.login.LoginRequest;
 import com.nikki.jwt.security.dto.token.TokenPair;
@@ -28,12 +29,20 @@ public class AuthenticationService {
     private final ClientService clientService;
     private final TokenPairService tokenPairService;
     private final ValidationService validationService;
+    private final EmailSenderService emailSenderService;
 
     public SecurityUserResponse register(CreateClientRequest request) {
         validationService.validateRequest(request);
         validationService.validateSecurityUserDoesNotExistByEmail(request.getEmail());
 
         // CREATING CANDIDATE FOR REGISTRATION AND SENDING LINK TO EMAIL
+        emailSenderService.sendEmail(
+                ConfirmRegisterMailMessage.builder()
+                        .to(request.getEmail())
+                        .subject("Registration confirmation on adminchakra.striving.live")
+                        .message("You account successfully created!")
+                        .build()
+        );
 
         ClientResponse clientResponse = clientService.createClient(request);
         SecurityUser securityUser = securityUserService.findSecurityUserByEmail(clientResponse.getEmail());

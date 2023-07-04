@@ -9,8 +9,8 @@ import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.RoleRepository;
 import com.nikki.jwt.security.repository.SecurityUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class SecurityUserService {
@@ -35,8 +36,9 @@ public class SecurityUserService {
     public SecurityUser createSecurityUser(CreateSecurityUserRequest request, String roleName) {
         Role role = roleRepository.findByName(roleName).orElseThrow(
                 () -> {
+                    log.error("Can't find ROLE: {} in DB", roleName);
                     throw HandledException.builder()
-                            .message("Can't find ROLE " + roleName + " in Roles DB")
+                            .message("Something went wrong")
                             .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                             .build();
                 }
@@ -75,17 +77,6 @@ public class SecurityUserService {
         return securityUserRepository.findByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("User with email: " + email + " not found")
         );
-    }
-
-    public void validateIssuerPassword(String issuerPassword) {
-        SecurityUser securityUser =
-                findSecurityUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (!passwordEncoder.matches(issuerPassword, securityUser.getPassword())) {
-            throw HandledException.builder()
-                    .message("Issuer is not valid")
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
-        }
     }
 
     public SecurityUserResponse mapToSecurityUserResponse(SecurityUser securityUser, TokenPair tokenPair) {

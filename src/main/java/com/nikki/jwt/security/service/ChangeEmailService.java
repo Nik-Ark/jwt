@@ -11,7 +11,6 @@ import com.nikki.jwt.security.entity.Admin;
 import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.entity.SecurityUser;
-import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,11 +29,12 @@ public class ChangeEmailService {
     private final AdminService adminService;
     private final ManagerService managerService;
     private final ClientService clientService;
-    private final ValidationUtil validationUtil;
+    private final ValidationService validationService;
     private final TokenPairService tokenPairService;
 
     public SecurityUserResponse changeAdminEmailSelf(ChangeEmailRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         Admin admin = changeAdminEmailByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
@@ -45,7 +45,8 @@ public class ChangeEmailService {
     }
 
     public AdminResponse changeAdminEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         Admin admin;
         try {
             admin = changeAdminEmailByEmail(targetUserEmail, request.getNewEmail());
@@ -62,10 +63,10 @@ public class ChangeEmailService {
 
     private Admin changeAdminEmailByEmail(String targetUserEmail, String newEmail) {
         if (securityUserService.securityUserExistsByEmail(newEmail)) {
-            log.error("nickname already exists: {}", newEmail);
+            log.error("Nickname already exists: {}", newEmail);
             throw HandledException.builder()
-                    .message("This nickname already exists, please enter another nickname")
-                    .httpStatus(HttpStatus.CONFLICT)
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
         Admin admin = adminService.findAdminByEmail(targetUserEmail);
@@ -76,7 +77,8 @@ public class ChangeEmailService {
     }
 
     public SecurityUserResponse changeManagerEmailSelf(ChangeEmailRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         Manager manager = changeManagerEmailByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
@@ -87,7 +89,8 @@ public class ChangeEmailService {
     }
 
     public ManagerResponse changeManagerEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         Manager manager;
         try {
             manager = changeManagerEmailByEmail(targetUserEmail, request.getNewEmail());
@@ -104,10 +107,10 @@ public class ChangeEmailService {
 
     private Manager changeManagerEmailByEmail(String targetUserEmail, String newEmail) {
         if (securityUserService.securityUserExistsByEmail(newEmail)) {
-            log.error("nickname already exists: {}", newEmail);
+            log.error("Nickname already exists: {}", newEmail);
             throw HandledException.builder()
-                    .message("This nickname already exists, please enter another nickname")
-                    .httpStatus(HttpStatus.CONFLICT)
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
         Manager manager = managerService.findManagerByEmail(targetUserEmail);
@@ -118,7 +121,8 @@ public class ChangeEmailService {
     }
 
     public SecurityUserResponse changeClientEmailSelf(ChangeEmailRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         Client client = changeClientEmailByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewEmail()
@@ -129,7 +133,8 @@ public class ChangeEmailService {
     }
 
     public ClientResponse changeClientEmailSuperior(ChangeEmailRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         Client client;
         try {
             client = changeClientEmailByEmail(targetUserEmail, request.getNewEmail());
@@ -146,10 +151,10 @@ public class ChangeEmailService {
 
     private Client changeClientEmailByEmail(String targetUserEmail, String newEmail) {
         if (securityUserService.securityUserExistsByEmail(newEmail)) {
-            log.error("nickname already exists: {}", newEmail);
+            log.error("Nickname already exists: {}", newEmail);
             throw HandledException.builder()
-                    .message("This nickname already exists, please enter another nickname")
-                    .httpStatus(HttpStatus.CONFLICT)
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
         Client client = clientService.findClientByEmail(targetUserEmail);
@@ -157,10 +162,5 @@ public class ChangeEmailService {
         client.setEmail(newEmail);
         securityUser.setEmail(newEmail);
         return clientService.save(client);
-    }
-
-    private void validateRequestAndIssuerPassword(ChangeEmailRequest request) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
     }
 }

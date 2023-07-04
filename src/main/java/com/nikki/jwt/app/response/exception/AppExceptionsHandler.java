@@ -42,7 +42,7 @@ public class AppExceptionsHandler {
         log.error("MissingServletRequestParameterException: {}", ex.toString());
         return new ResponseEntity<>(
                 ErrorResponse.builder()
-                        .message("Invalid request")
+                        .message("Bad request")
                         .build()
                 , HttpStatus.BAD_REQUEST
         );

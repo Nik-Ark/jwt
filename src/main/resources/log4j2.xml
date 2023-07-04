@@ -26,6 +26,9 @@
 <!--        PROD:-->
             <Logger name="com.nikki.jwt" level="info" additivity="false">
                 <AppenderRef ref="fileAppender" />
+
+<!--         REMOVE CONSOLE APPENDER IN PRODUCTION:   -->
+                <AppenderRef ref="consoleAppender" />
             </Logger>
 
             <Root level="info">

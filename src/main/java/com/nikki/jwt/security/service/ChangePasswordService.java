@@ -9,7 +9,6 @@ import com.nikki.jwt.security.entity.Admin;
 import com.nikki.jwt.security.entity.Client;
 import com.nikki.jwt.security.entity.Manager;
 import com.nikki.jwt.security.entity.SecurityUser;
-import com.nikki.jwt.security.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,16 +23,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class ChangePasswordService {
-
-    private final SecurityUserService securityUserService;
     private final AdminService adminService;
     private final ManagerService managerService;
     private final ClientService clientService;
-    private final ValidationUtil validationUtil;
+    private final ValidationService validationService;
     private final PasswordEncoder passwordEncoder;
 
+
+
     public AdminResponse changeAdminPasswordSelf(ChangePasswordRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         return changeAdminPasswordByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewPassword()
@@ -41,7 +41,8 @@ public class ChangePasswordService {
     }
 
     public AdminResponse changeAdminPasswordSuperior(ChangePasswordRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         AdminResponse adminResponse;
         try {
             adminResponse = changeAdminPasswordByEmail(targetUserEmail, request.getNewPassword());
@@ -64,7 +65,8 @@ public class ChangePasswordService {
     }
 
     public ManagerResponse changeManagerPasswordSelf(ChangePasswordRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         return changeManagerPasswordByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewPassword()
@@ -72,7 +74,8 @@ public class ChangePasswordService {
     }
 
     public ManagerResponse changeManagerPasswordSuperior(ChangePasswordRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         ManagerResponse managerResponse;
         try {
             managerResponse = changeManagerPasswordByEmail(targetUserEmail, request.getNewPassword());
@@ -95,7 +98,8 @@ public class ChangePasswordService {
     }
 
     public ClientResponse changeClientPasswordSelf(ChangePasswordRequest request) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         return changeClientPasswordByEmail(
                 SecurityContextHolder.getContext().getAuthentication().getName(),
                 request.getNewPassword()
@@ -103,7 +107,8 @@ public class ChangePasswordService {
     }
 
     public ClientResponse changeClientPasswordSuperior(ChangePasswordRequest request, String targetUserEmail) {
-        validateRequestAndIssuerPassword(request);
+        validationService.validateRequest(request);
+        validationService.validateIssuerPassword(request.getIssuerPassword());
         ClientResponse clientResponse;
         try {
             clientResponse = changeClientPasswordByEmail(targetUserEmail, request.getNewPassword());
@@ -123,10 +128,5 @@ public class ChangePasswordService {
         securityUser.setPassword(passwordEncoder.encode(newPassword));
         clientService.save(client);
         return clientService.mapToClientResponse(client);
-    }
-
-    private void validateRequestAndIssuerPassword(ChangePasswordRequest request) {
-        validationUtil.validationRequest(request);
-        securityUserService.validateIssuerPassword(request.getIssuerPassword());
     }
 }

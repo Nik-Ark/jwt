@@ -29,10 +29,10 @@ public class ValidationService {
 
     public void validateSecurityUserDoesNotExistByEmail(String email) {
         if (securityUserRepository.existsByEmail(email)) {
-            log.error("nickname already exists: {}", email);
+            log.error("Nickname already exists: {}", email);
             throw HandledException.builder()
-                    .message("This nickname already exists, please enter another nickname")
-                    .httpStatus(HttpStatus.CONFLICT)
+                    .message("Bad request")
+                    .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
     }
@@ -43,8 +43,9 @@ public class ValidationService {
                 () -> new UsernameNotFoundException("User with email: " + email + " not found")
         );
         if (!passwordEncoder.matches(issuerPassword, securityUser.getPassword())) {
+            log.error("Issuer password is not valid, issuer: {}", email);
             throw HandledException.builder()
-                    .message("Issuer is not valid")
+                    .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .build();
         }
