@@ -1,18 +1,20 @@
-package com.nikki.jwt.security.dto.client;
+package com.nikki.jwt.security.dto.register_applicant;
 
 import com.nikki.jwt.security.api.regexp.RegExp;
 import com.nikki.jwt.security.dto.security_user.CreateSecurityUserRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateClientRequest extends CreateSecurityUserRequest {
-
+public class CreateRegisterApplicantRequest extends CreateSecurityUserRequest {
     @NotNull
     @NotBlank(message = "email is required")
     @Pattern(regexp = RegExp.email, message = "invalid email format")
@@ -39,7 +41,7 @@ public class CreateClientRequest extends CreateSecurityUserRequest {
 
     @Override
     public String toString() {
-        return "CreateClientRequest: {" +
+        return "CreateRegisterApplicantRequest: {" +
                 " email: '" + email + '\'' +
                 ", firstName: '" + firstName + '\'' +
                 ", lastName: '" + lastName + '\'' +

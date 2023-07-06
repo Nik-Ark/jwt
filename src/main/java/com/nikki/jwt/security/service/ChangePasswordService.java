@@ -51,6 +51,7 @@ public class ChangePasswordService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return adminResponse;
@@ -84,6 +85,7 @@ public class ChangePasswordService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return managerResponse;
@@ -117,6 +119,7 @@ public class ChangePasswordService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return clientResponse;

@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS tokens
 (
     id                  BIGINT              NOT NULL AUTO_INCREMENT,
     token               VARCHAR(256)        NOT NULL UNIQUE,
+    expires_at          TIMESTAMP           NOT NULL,
     sec_user_id         BIGINT,
     PRIMARY KEY         (id),
     FOREIGN KEY         (sec_user_id)       REFERENCES jwt_user_db.security_users(id)
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens
 (
     id                  BIGINT              NOT NULL AUTO_INCREMENT,
     refresh_token       VARCHAR(256)        NOT NULL UNIQUE,
+    expires_at          TIMESTAMP           NOT NULL,
     sec_user_id         BIGINT,
     PRIMARY KEY         (id),
     FOREIGN KEY         (sec_user_id)       REFERENCES jwt_user_db.security_users(id)
@@ -49,7 +51,8 @@ CREATE TABLE IF NOT EXISTS clients
     last_name       VARCHAR(45)     NOT NULL,
     phone_number    VARCHAR(45)             ,
     city            VARCHAR(45)             ,
-    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sec_user_id     BIGINT,
     PRIMARY KEY     (id),
     FOREIGN KEY     (sec_user_id)   REFERENCES jwt_user_db.security_users(id)
@@ -62,7 +65,8 @@ CREATE TABLE IF NOT EXISTS managers
     first_name      VARCHAR(45)     NOT NULL,
     last_name       VARCHAR(45)     NOT NULL,
     phone_number    VARCHAR(45)             ,
-    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sec_user_id     BIGINT,
     PRIMARY KEY     (id),
     FOREIGN KEY     (sec_user_id)   REFERENCES jwt_user_db.security_users(id)
@@ -75,8 +79,23 @@ CREATE TABLE IF NOT EXISTS admins
     first_name      VARCHAR(45)     NOT NULL,
     last_name       VARCHAR(45)     NOT NULL,
     phone_number    VARCHAR(45)             ,
-    time_insert     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sec_user_id     BIGINT,
     PRIMARY KEY     (id),
     FOREIGN KEY     (sec_user_id)   REFERENCES jwt_user_db.security_users(id)
+) COLLATE utf8_bin;
+
+CREATE TABLE IF NOT EXISTS register_applicants
+(
+    id              CHAR(32)        NOT NULL,
+    email           VARCHAR(45)     NOT NULL,
+    password        VARCHAR(100)    NOT NULL,
+    first_name      VARCHAR(45)     NOT NULL,
+    last_name       VARCHAR(45)     NOT NULL,
+    phone_number    VARCHAR(45)             ,
+    city            VARCHAR(45)             ,
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at      TIMESTAMP       NOT NULL,
+    PRIMARY KEY     (id)
 ) COLLATE utf8_bin;

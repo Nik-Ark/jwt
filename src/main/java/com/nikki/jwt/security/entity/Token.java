@@ -3,6 +3,8 @@ package com.nikki.jwt.security.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,6 +21,9 @@ public class Token {
 
     @Column(name = "token", unique = true)
     private String token;
+
+    @Column(name = "expires_at")
+    private Date expiresAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sec_user_id")

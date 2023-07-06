@@ -4,6 +4,7 @@ import com.nikki.jwt.app.response.exception.HandledException;
 import com.nikki.jwt.security.dto.security_user.CreateSecurityUserRequest;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.dto.token.TokenPair;
+import com.nikki.jwt.security.entity.RegisterApplicant;
 import com.nikki.jwt.security.entity.Role;
 import com.nikki.jwt.security.entity.SecurityUser;
 import com.nikki.jwt.security.repository.RoleRepository;
@@ -33,22 +34,21 @@ public class SecurityUserService {
 
 
 
-    public SecurityUser createSecurityUser(CreateSecurityUserRequest request, String roleName) {
-        Role role = roleRepository.findByName(roleName).orElseThrow(
-                () -> {
-                    log.error("Can't find ROLE: {} in DB", roleName);
-                    throw HandledException.builder()
-                            .message("Something went wrong")
-                            .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .build();
-                }
-        );
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        return saveSecurityUser(request, roles);
+    public SecurityUser createSecurityUser(RegisterApplicant registerApplicant, String roleName) {
+        Set<Role> roles = findSecurityUserRole(roleName);
+        SecurityUser securityUser = SecurityUser.builder()
+                .email(registerApplicant.getEmail())
+                .firstName(registerApplicant.getFirstName())
+                .lastName(registerApplicant.getLastName())
+                .password(registerApplicant.getPassword())
+                .roles(roles)
+                .tokens(new ArrayList<>())
+                .build();
+        return save(securityUser);
     }
 
-    private SecurityUser saveSecurityUser(CreateSecurityUserRequest request, Set<Role> roles) {
+    public SecurityUser createSecurityUser(CreateSecurityUserRequest request, String roleName) {
+        Set<Role> roles = findSecurityUserRole(roleName);
         SecurityUser securityUser = SecurityUser.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
@@ -60,7 +60,23 @@ public class SecurityUserService {
         return save(securityUser);
     }
 
-    public SecurityUser save(SecurityUser securityUser) {
+    private Set<Role> findSecurityUserRole(String roleName) {
+        Role role = roleRepository.findByName(roleName).orElseThrow(
+                () -> {
+                    log.error("Can't find ROLE: {} in DB", roleName);
+                    throw HandledException.builder()
+                            .message("Something went wrong")
+                            .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build();
+                }
+        );
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        return roles;
+    }
+
+    private SecurityUser save(SecurityUser securityUser) {
+        log.info("SecurityUser saved: {}", securityUser);
         return securityUserRepository.save(securityUser);
     }
 

@@ -1,12 +1,11 @@
 package com.nikki.jwt.security.service;
 
-import com.nikki.jwt.security.dto.client.ClientResponse;
-import com.nikki.jwt.security.dto.client.CreateClientRequest;
-import com.nikki.jwt.security.dto.confirm_email.ConfirmRegisterMailMessage;
+import com.nikki.jwt.security.dto.register_applicant.CreateRegisterApplicantRequest;
 import com.nikki.jwt.security.dto.security_user.SecurityUserResponse;
 import com.nikki.jwt.security.dto.login.LoginRequest;
 import com.nikki.jwt.security.dto.token.TokenPair;
 import com.nikki.jwt.security.entity.RefreshToken;
+import com.nikki.jwt.security.entity.RegisterApplicant;
 import com.nikki.jwt.security.entity.SecurityUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,36 +15,32 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final SecurityUserService securityUserService;
+    private final RegisterApplicantService registerApplicantService;
     private final ClientService clientService;
     private final TokenPairService tokenPairService;
-    private final ValidationService validationService;
-    private final EmailSenderService emailSenderService;
 
-    public SecurityUserResponse register(CreateClientRequest request) {
-        validationService.validateRequest(request);
-        validationService.validateSecurityUserDoesNotExistByEmail(request.getEmail());
 
-        // CREATING CANDIDATE FOR REGISTRATION AND SENDING LINK TO EMAIL
-        emailSenderService.sendEmail(
-                ConfirmRegisterMailMessage.builder()
-                        .to(request.getEmail())
-                        .subject("Registration confirmation on adminchakra.striving.live")
-                        .message("You account successfully created!")
-                        .build()
-        );
 
-        ClientResponse clientResponse = clientService.createClient(request);
-        SecurityUser securityUser = securityUserService.findSecurityUserByEmail(clientResponse.getEmail());
+    public void registerApplicant(CreateRegisterApplicantRequest request) {
+        registerApplicantService.createRegisterApplicant(request);
+    }
+
+    public SecurityUserResponse confirmRegistration(String registerApplicantId) {
+        RegisterApplicant registerApplicant = registerApplicantService.getRegisterApplicant(registerApplicantId);
+        SecurityUser securityUser = clientService.createClientFromRegisterApplicant(registerApplicant);
+        registerApplicantService.deleteRegisterApplicantById(registerApplicantId);
         TokenPair tokenPair = tokenPairService.createAndSaveTokenPair(securityUser);
         return securityUserService.mapToSecurityUserResponse(securityUser, tokenPair);
     }

@@ -55,6 +55,12 @@ public class ClientService {
         return mapToClientResponse(client);
     }
 
+    public SecurityUser createClientFromRegisterApplicant(RegisterApplicant registerApplicant) {
+        SecurityUser securityUser = securityUserService.createSecurityUser(registerApplicant, ROLE.CLIENT.name());
+        Client client = saveClient(registerApplicant, securityUser);
+        return securityUser;
+    }
+
     private Client saveClient(CreateClientRequest request, SecurityUser securityUser) {
         Client client = Client.builder()
                 .email(request.getEmail())
@@ -67,7 +73,20 @@ public class ClientService {
         return save(client);
     }
 
+    private Client saveClient(RegisterApplicant registerApplicant, SecurityUser securityUser) {
+        Client client = Client.builder()
+                .email(registerApplicant.getEmail())
+                .firstName(registerApplicant.getFirstName())
+                .lastName(registerApplicant.getLastName())
+                .phoneNumber(registerApplicant.getPhoneNumber())
+                .city(registerApplicant.getCity())
+                .securityUser(securityUser)
+                .build();
+        return save(client);
+    }
+
     public Client save(Client client) {
+        log.info("Client saved: {}", client);
         return clientRepository.save(client);
     }
 
@@ -111,6 +130,7 @@ public class ClientService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return clientResponse;
@@ -138,6 +158,7 @@ public class ClientService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return clientResponse;

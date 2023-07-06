@@ -41,6 +41,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ( routes with .permitAll() FilterChain method )
         */
         log.info("JWT FILTER STARTED");
+        log.info("Remote User: {}", request.getRemoteUser());
+        log.info("Path Info: {}", request.getPathInfo());
+        log.info("Context Path: {}", request.getContextPath());
+        log.info("Method: {}", request.getMethod());
+        log.info("Query String: {}", request.getQueryString());
+        log.info("Request URI: {}", request.getRequestURI());
+        log.info("Request URL: {}", request.getRequestURL());
+
 
         final String authHeader = request.getHeader("Authorization");
 

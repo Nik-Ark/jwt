@@ -68,6 +68,7 @@ public class ManagerService {
     }
 
     public Manager save(Manager manager) {
+        log.info("Manager saved: {}", manager);
         return managerRepository.save(manager);
     }
 
@@ -111,6 +112,7 @@ public class ManagerService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return managerResponse;
@@ -138,6 +140,7 @@ public class ManagerService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return managerResponse;

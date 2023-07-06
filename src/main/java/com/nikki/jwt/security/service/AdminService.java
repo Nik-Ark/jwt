@@ -48,6 +48,7 @@ public class AdminService {
     }
 
     public Admin save(Admin admin) {
+        log.info("Admin saved: {}", admin);
         return adminRepository.save(admin);
     }
 
@@ -87,6 +88,7 @@ public class AdminService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return adminResponse;
@@ -114,6 +116,7 @@ public class AdminService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         return adminResponse;

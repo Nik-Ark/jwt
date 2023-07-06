@@ -55,6 +55,7 @@ public class ChangeEmailService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         tokenPairService.deleteAllTokensAndRefreshTokensBySecurityUserEmail(admin.getSecurityUser().getEmail());
@@ -99,6 +100,7 @@ public class ChangeEmailService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         tokenPairService.deleteAllTokensAndRefreshTokensBySecurityUserEmail(manager.getSecurityUser().getEmail());
@@ -143,6 +145,7 @@ public class ChangeEmailService {
             throw HandledException.builder()
                     .message("Bad request")
                     .httpStatus(HttpStatus.BAD_REQUEST)
+                    .cause(exception.getCause())
                     .build();
         }
         tokenPairService.deleteAllTokensAndRefreshTokensBySecurityUserEmail(client.getSecurityUser().getEmail());
