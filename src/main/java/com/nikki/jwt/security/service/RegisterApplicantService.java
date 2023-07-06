@@ -23,6 +23,7 @@ public class RegisterApplicantService {
     private final RegisterApplicantRepository registerApplicantRepository;
     private final PasswordEncoder passwordEncoder;
     private final long REG_APPLICANT_ENTRY_LIFE_SPAN;
+    private final String CONFIRMATION_LINK;
 
 
     public RegisterApplicantService(
@@ -30,13 +31,15 @@ public class RegisterApplicantService {
             EmailSenderService emailSenderService,
             RegisterApplicantRepository registerApplicantRepository,
             PasswordEncoder passwordEncoder,
-            @Value("${REGISTER_APPLICANT_ENTRY_LIFE_SPAN}") long REG_APPLICANT_ENTRY_LIFE_SPAN
+            @Value("${REGISTER_APPLICANT_ENTRY_LIFE_SPAN}") long REG_APPLICANT_ENTRY_LIFE_SPAN,
+            @Value("${EMAIL_SENDER_SERVICE_CONFIRMATION_LINK}") String CONFIRMATION_LINK
     ) {
         this.validationService = validationService;
         this.emailSenderService = emailSenderService;
         this.registerApplicantRepository = registerApplicantRepository;
         this.passwordEncoder = passwordEncoder;
         this.REG_APPLICANT_ENTRY_LIFE_SPAN = REG_APPLICANT_ENTRY_LIFE_SPAN;
+        this.CONFIRMATION_LINK = CONFIRMATION_LINK;
     }
 
 
@@ -65,7 +68,7 @@ public class RegisterApplicantService {
                     ConfirmRegisterMailMessage.builder()
                             .to(request.getEmail())
                             .subject("Registration confirmation on adminchakra.striving.live")
-                            .message(applicant.getId())
+                            .message(CONFIRMATION_LINK + "/register?confirm-register=" + applicant.getId())
                             .build()
             );
         } catch (HandledException exception) {
