@@ -51,7 +51,7 @@ public class AuthenticationController {
         return new ResponseEntity<>("Email verification sent", HttpStatus.OK);
     }
 
-    @PostMapping("/confirm-register/{registerApplicantId}")
+    @PostMapping("/register-confirm/{registerApplicantId}")
     public ResponseEntity<SecurityUserResponse> confirmRegistration(
             @PathVariable @NotNull @NotBlank String registerApplicantId
     ) {

@@ -62,18 +62,16 @@ public class RegisterApplicantService {
         registerApplicantRepository.save(applicant);
         log.info("Register Applicant saved: {}", applicant);
 
-        // LOGS MADE IN SEND EMAIL
         try {
             emailSenderService.sendEmail(
                     ConfirmRegisterMailMessage.builder()
                             .to(request.getEmail())
                             .subject("Registration confirmation on adminchakra.striving.live")
-                            .message(CONFIRMATION_LINK + "/register?confirm-register=" + applicant.getId())
+                            .message(CONFIRMATION_LINK + "/register-confirm?random=" + applicant.getId())
                             .build()
             );
         } catch (HandledException exception) {
-            registerApplicantRepository.delete(applicant);
-            log.info("Register Applicant deleted");
+            log.info("Register Applicant saving canceled by current Transaction");
             throw exception;
         }
     }
