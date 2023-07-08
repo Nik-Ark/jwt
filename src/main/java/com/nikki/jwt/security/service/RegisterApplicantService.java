@@ -67,7 +67,11 @@ public class RegisterApplicantService {
                     ConfirmRegisterMailMessage.builder()
                             .to(request.getEmail())
                             .subject("Registration confirmation on adminchakra.striving.live")
-                            .message(CONFIRMATION_LINK + "/register-confirm?random=" + applicant.getId())
+                            .message(
+                                    "Please follow provided link to confirm your registration..." + "\n" +
+                                    "This link is only active 1 minute." + "\n" +
+                                    CONFIRMATION_LINK + "/register-confirm?random=" + applicant.getId()
+                            )
                             .build()
             );
         } catch (HandledException exception) {

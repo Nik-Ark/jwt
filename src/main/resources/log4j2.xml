@@ -28,7 +28,7 @@
                 <AppenderRef ref="fileAppender" />
 
 <!--         REMOVE CONSOLE APPENDER IN PRODUCTION:   -->
-                <AppenderRef ref="consoleAppender" />
+<!--                <AppenderRef ref="consoleAppender" />-->
             </Logger>
 
             <Root level="info">

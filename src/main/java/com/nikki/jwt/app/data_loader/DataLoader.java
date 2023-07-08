@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Profile(value = "dev")
+@Profile(value = "production")
 public class DataLoader implements CommandLineRunner {
 
     private final RoleService roleService;
@@ -50,7 +50,7 @@ public class DataLoader implements CommandLineRunner {
                 .email("employer@demo.admin")
                 .firstName("Employer")
                 .lastName("Hire_Me")
-                .password("PotentialEmployer777$")
+                .password("BestEmployerInTheWorld2023$$$")
                 .phoneNumber("+79999999999")
                 .build();
 
