@@ -130,10 +130,10 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
-					<finalName>spring-jwt</finalName>
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>spring-jwt</finalName>
 	</build>
 
 </project>
