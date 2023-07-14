@@ -40,7 +40,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             It fires even on request which id sent to not protected route
             ( routes with .permitAll() FilterChain method )
         */
+
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        String ip;
+        if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
+            ip = request.getRemoteAddr();
+        } else {
+            ip = xfHeader.split(",")[0];
+        }
+
         log.info("JWT FILTER STARTED:");
+        log.info("Request made from IP: {}", ip);
         log.info("Method: {}, Request URL: {}", request.getMethod(), request.getRequestURL());
         log.info("Request URI: {}, Query String: {}", request.getRequestURI(), request.getQueryString());
 
