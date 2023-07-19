@@ -42,15 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         */
 
         String xfHeader = request.getHeader("X-Forwarded-For");
-        String ip;
-        if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
-            ip = request.getRemoteAddr();
-        } else {
-            ip = xfHeader.split(",")[0];
-        }
+        String xrHeader = request.getHeader("X-Real-IP");
+        String remoteAddr = request.getRemoteAddr();
 
         log.info("JWT FILTER STARTED:");
-        log.info("Request made from IP: {}", ip);
+        log.info("X-Forwarded-For: {}", xfHeader);
+        log.info("X-Real-IP: {}", xrHeader);
+        log.info("Remote address: {}", remoteAddr);
         log.info("Method: {}, Request URL: {}", request.getMethod(), request.getRequestURL());
         log.info("Request URI: {}, Query String: {}", request.getRequestURI(), request.getQueryString());
 
